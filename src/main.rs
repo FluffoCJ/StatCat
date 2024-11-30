@@ -3,7 +3,8 @@ use std::io::{self, BufRead};
 
 fn main() {
     let username = get_user(); 
-    let (hostname, os, architecture) = get_system_info();
+    let desktop = get_desktop();
+    let (hostname, os, architecture, kernel) = get_system_info();
 
     println!("Username: {}", username);
     println!("Hostname: {}", hostname);
@@ -19,17 +20,36 @@ fn main() {
         }
         None => println!("No package manager found"),
     }
+
+    println!("Kernel: {}", kernel);
+    println!("Desktop: {}", desktop);
     
 }
 
 
+fn get_desktop() -> String {
+    let output = {
+        Command::new("sh")
+            .arg("-c")
+            .arg("echo $XDG_CURRENT_DESKTOP")
+            .output()
+            .expect("Failed to execute process")
+    };
+
+    String::from_utf8(output.stdout)
+        .expect("Invalid UTF-8")
+        .trim()
+        .to_string()
+
+}
+
 fn get_user() -> String {
     let output = {
         Command::new("sh")
-        .arg("-c")
-        .arg("echo $USER")
-        .output()
-        .expect("Failed to execute process")
+            .arg("-c")
+            .arg("echo $USER")
+            .output()
+            .expect("Failed to execute process")
     };
     
     String::from_utf8(output.stdout)
@@ -39,13 +59,13 @@ fn get_user() -> String {
 
 }
 
-fn get_system_info() -> (String, String, String) {
+fn get_system_info() -> (String, String, String, String) {
     let output = {
         Command::new("sh")
-        .arg("-c")
-        .arg("hostnamectl")
-        .output()
-        .expect("Failed to execute process")
+            .arg("-c")
+            .arg("hostnamectl")
+            .output()
+            .expect("Failed to execute process")
     };
 
     let stdout = String::from_utf8(output.stdout).expect("Invalid UTF-8");
@@ -62,8 +82,9 @@ fn get_system_info() -> (String, String, String) {
     let hostname = extract_field("Static hostname");
     let os = extract_field("Operating System");
     let architecture = extract_field("Architecture");
+    let kernel = extract_field("Kernel");
 
-    (hostname, os, architecture)
+    (hostname, os, architecture, kernel)
 }
 
 fn detect_package_manager() -> Option<&'static str> {
