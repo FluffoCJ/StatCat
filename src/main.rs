@@ -1,121 +1,113 @@
+#![allow(unused)]
 use std::process::Command;
-use std::io::{self, BufRead};
+use std::io::{BufRead, Read};
 use sysinfo::{System, RefreshKind, CpuRefreshKind};
+use toml;
+use std::path::PathBuf;
+use std::fs::File;
+use crate::config::{Config, General, AppearanceSettings, Order};
+
+mod fetch;
+mod config;
 
 fn main() {
-    let mut system = System::new_all();
+    let system = System::new_all();
 
 
-    let username = get_user(); 
-    let desktop = get_desktop();
+    let username = fetch::get_user(); 
+    let desktop = fetch::get_desktop();
     //let (hostname, os, architecture, kernel) = get_system_info();
-
-    println!("Username: {}", username);
-    println!("Kernel: {}", System::kernel_version().unwrap_or_default());
-    println!("System host name: {}", System::host_name().unwrap_or_default());
-    print_package(); 
-    print_cpu_brand();
-    println!("Desktop: {}", desktop);
     
-    let used_memory_gb = bytes_to_gb(system.used_memory());
-    let total_memory_gb = bytes_to_gb(system.total_memory());
-    println!("Memory: {}GB/{}GB", used_memory_gb, total_memory_gb);
+
+    let config = load_config();
+        println!("Loaded Configuration: {:?}", config);
+
+    for field in &config.order.fields {
+        match field.as_str() {
+            "hostname" => {
+                if config.general.hostname {
+                    println!("Hostname: {}", System::host_name().unwrap_or_default());
+                }
+
+            }
+            "cpu" => {
+                if config.general.show_cpu {
+                    fetch::print_cpu_brand();
+                }
+            }
+            "memory" => {
+                if config.general.show_memory {
+                    let used_memory_gb = bytes_to_gb(system.used_memory());
+                    let total_memory_gb = bytes_to_gb(system.total_memory());
+                    println!("Memory: {}GB/{}GB", used_memory_gb, total_memory_gb); 
+                }
+            }
+            "os" => {
+                if config.general.show_os {
+                    println!("OS: {}", System::host_name().unwrap_or_default());
+                }
+            }
+            _ => {
+                    println!("Unknown field: {}", field);
+                }
+        }
+    }
+
+
+    //println!("Username: {}", username);
+    //println!("Kernel: {}", System::kernel_version().unwrap_or_default());
+    //println!("System host name: {}", System::host_name().unwrap_or_default());
+    //print_package(); 
+    //print_cpu_brand();
+    //println!("Desktop: {}", desktop);
+    //
+    //let used_memory_gb = bytes_to_gb(system.used_memory());
+    //let total_memory_gb = bytes_to_gb(system.total_memory());
+    //println!("Memory: {}GB/{}GB", used_memory_gb, total_memory_gb);
 }
+
+fn get_config_path() -> PathBuf {
+    let config_dir = dirs::config_dir().expect("Unable to determine the config directory");
+    config_dir.join("fetchd").join("config.toml")
+}
+
+fn load_config() -> Config {
+    let path = get_config_path();
+
+    if !path.exists() {
+        println!("Config file not found. Creating a default one at {:?}", path);
+        let default_config = Config {
+            general: General {
+                hostname: true,
+                show_cpu: true,
+                show_memory: true,
+                show_os: true,
+            },
+            appearance: AppearanceSettings {
+
+            },
+            order: Order {
+                fields: vec!["hostname".to_string(), "cpu".to_string(), "memory".to_string(), "os".to_string()],
+            },
+        };
+
+        std::fs::create_dir_all(path.parent().unwrap()).expect("Unable to create config directory");
+        let mut file = File::create(&path).expect("Unable to create config file");
+        let toml_str = toml::to_string(&default_config).expect("Error serializing config");
+        use std::io::Write;
+        file.write_all(toml_str.as_bytes()).expect("Error writing default config");
+        return default_config;
+    }
+
+    let mut file = File::open(&path).expect("Unable to open config file");
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).expect("Unable to read config file");
+    toml::from_str(&contents).expect("Error parsing config file")
+}
+
 
 fn bytes_to_gb(bytes: u64) -> f64 {
-    (bytes as f64 / 1_073_741_824.0 * 100.0).round() / 100.0
-}
-
-fn print_cpu_brand() {
-    let s = System::new_with_specifics(
-        RefreshKind::new().with_cpu(CpuRefreshKind::everything()),
-    );
-    if let Some(cpu) = s.cpus().iter().next() {
-        println!("Processor: {}", cpu.brand());
-    } 
-    else {
-        println!("No CPUs found");
-    }
-}
-
-fn print_package() {
-    match detect_package_manager() {
-        Some(manager) =>
-        if let Some(count) = get_installed_packages(manager) {
-            println!("Packages: {} ({})", count, manager);
-        } 
-        else {
-            println!("Failed to get package count from {}", manager);
-        }
-        None => println!("No package manager found"),
-    }
-}
-
-fn get_desktop() -> String {
-    let output = {
-        Command::new("sh")
-            .arg("-c")
-            .arg("echo $XDG_CURRENT_DESKTOP")
-            .output()
-            .expect("Failed to execute process")
-    };
-
-    String::from_utf8(output.stdout)
-        .expect("Invalid UTF-8")
-        .trim()
-        .to_string()
-
-}
-
-fn get_user() -> String {
-    let output = {
-        Command::new("sh")
-            .arg("-c")
-            .arg("echo $USER")
-            .output()
-            .expect("Failed to execute process")
-    };
-    
-    String::from_utf8(output.stdout)
-        .expect("Invalid UTF-8")
-        .trim()
-        .to_string()
-
-}
-
-
-
-fn detect_package_manager() -> Option<&'static str> {
-    let managers = [
-    ("pacman", "pacman"),
-    ("dpkg", "dpkg"),
-    ("rpm", "rpm"),
-    ("zypper", "zypper")
-    ];
-
-    for (name, cmd) in &managers {
-        if Command::new(cmd).output().is_ok() {
-            return Some(name);
-        }
-    }
-    None
-}
-
-fn get_installed_packages(manager: &str) -> Option<String> {
-    let command = match manager {
-        "pacman" => Command::new("pacman").args(&["-Qq"]).output(),
-        "dpkg" => Command::new("dpkg").args(&["--get-selections"]).output(),
-        "rpm" => Command::new("rpm").args(&["-qa"]).output(),
-        "zypper" => Command::new("zypper").args(&["se", "--installed-only"]).output(),
-        _ => return None,
-    };
-
-    match command {
-        Ok(output) if output.status.success() => {
-            Some(output.stdout.lines().count().to_string())
-        }
-        _ => None,
-    }
+    (bytes as f64 / 1_073_741_824.0 * 10.0).round() / 10.0
 }
 
 
