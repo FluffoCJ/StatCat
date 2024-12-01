@@ -12,13 +12,19 @@ pub struct Config {
 pub struct General {
     pub hostname: bool,
     pub show_cpu: bool,
-    pub show_memory: bool,
+    pub show_memory_usage: bool,
+    pub show_memory_percent_used: bool,
+    pub show_memory_percent_free: bool,
+    pub show_memory_used: bool,
+    pub show_memory_free: bool,
+    pub show_memory_total: bool,
     pub show_os: bool,
+
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AppearanceSettings {
-    // Add fields here as necessary
+    
 }
 
 #[derive(Serialize, Deserialize, Debug)]

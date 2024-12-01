@@ -16,7 +16,6 @@ fn main() {
 
     let username = fetch::get_user(); 
     let desktop = fetch::get_desktop();
-    //let (hostname, os, architecture, kernel) = get_system_info();
     
 
     let config = load_config();
@@ -35,11 +34,19 @@ fn main() {
                     fetch::print_cpu_brand();
                 }
             }
-            "memory" => {
-                if config.general.show_memory {
+            "memory_usage" => {
+                if config.general.show_memory_usage {
                     let used_memory_gb = bytes_to_gb(system.used_memory());
                     let total_memory_gb = bytes_to_gb(system.total_memory());
                     println!("Memory: {}GB/{}GB", used_memory_gb, total_memory_gb); 
+                }
+            }
+            "memory_percent_used" => {
+                if config.general.show_memory_percent_used {
+                    let used_memory_gb = bytes_to_gb(system.used_memory());
+                    let total_memory_gb = bytes_to_gb(system.total_memory()); 
+                    let used_memory_percent_used = used_memory_gb / total_memory_gb * 100.0;
+                    println!("Memory used: {}%", used_memory_percent_used.round());
                 }
             }
             "os" => {
@@ -54,16 +61,7 @@ fn main() {
     }
 
 
-    //println!("Username: {}", username);
-    //println!("Kernel: {}", System::kernel_version().unwrap_or_default());
-    //println!("System host name: {}", System::host_name().unwrap_or_default());
-    //print_package(); 
-    //print_cpu_brand();
-    //println!("Desktop: {}", desktop);
-    //
-    //let used_memory_gb = bytes_to_gb(system.used_memory());
-    //let total_memory_gb = bytes_to_gb(system.total_memory());
-    //println!("Memory: {}GB/{}GB", used_memory_gb, total_memory_gb);
+
 }
 
 fn get_config_path() -> PathBuf {
@@ -80,7 +78,12 @@ fn load_config() -> Config {
             general: General {
                 hostname: true,
                 show_cpu: true,
-                show_memory: true,
+                show_memory_usage: true,
+                show_memory_percent_used: false,
+                show_memory_percent_free: false,
+                show_memory_total: false,
+                show_memory_used: false,
+                show_memory_free: false,
                 show_os: true,
             },
             appearance: AppearanceSettings {
@@ -111,30 +114,3 @@ fn bytes_to_gb(bytes: u64) -> f64 {
 }
 
 
-//fn get_system_info() -> (String, String, String, String) {
-//    let output = {
-//        Command::new("sh")
-//            .arg("-c")
-//            .arg("hostnamectl")
-//            .output()
-//            .expect("Failed to execute process")
-//    };
-//
-//    let stdout = String::from_utf8(output.stdout).expect("Invalid UTF-8");
-//
-//    let extract_field =  |field: &str| {
-//        stdout
-//            .lines()
-//            .find(|line| line.trim_start().starts_with(field))
-//            .and_then(|line| line.splitn(2, ':').nth(1))
-//            .map(|value| value.trim().to_string())
-//            .unwrap_or_else(|| "Not found".to_string())
-//    };
-//
-//    let hostname = extract_field("Static hostname");
-//    let os = extract_field("Operating System");
-//    let architecture = extract_field("Architecture");
-//    let kernel = extract_field("Kernel");
-//
-//    (hostname, os, architecture, kernel)
-//}

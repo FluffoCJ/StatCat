@@ -1,10 +1,7 @@
 use std::process::Command;
-use std::io::{BufRead, Read};
+use std::io::BufRead;
 use sysinfo::{System, RefreshKind, CpuRefreshKind};
-use toml;
-use std::path::PathBuf;
-use std::fs::File;
-use crate::config::{Config, General, AppearanceSettings, Order};
+
 
 
 
