@@ -1,15 +1,35 @@
 use std::process::Command;
 use std::io::{self, BufRead};
+use sysinfo::{System, RefreshKind, CpuRefreshKind};
 
 fn main() {
     let username = get_user(); 
     let desktop = get_desktop();
-    let (hostname, os, architecture, kernel) = get_system_info();
+    //let (hostname, os, architecture, kernel) = get_system_info();
 
     println!("Username: {}", username);
-    println!("Hostname: {}", hostname);
-    println!("Distro: {} {}", os, architecture);
+    println!("Kernel: {}", System::kernel_version().unwrap_or_default());
+    println!("System host name: {}", System::host_name().unwrap_or_default());
+    print_package(); 
+    print_cpu_brand();
+    println!("Desktop: {}", desktop);
+
     
+}
+
+fn print_cpu_brand() {
+    let s = System::new_with_specifics(
+        RefreshKind::new().with_cpu(CpuRefreshKind::everything()),
+    );
+    if let Some(cpu) = s.cpus().iter().next() {
+        println!("Processor: {}", cpu.brand());
+    } 
+    else {
+        println!("No CPUs found");
+    }
+}
+
+fn print_package() {
     match detect_package_manager() {
         Some(manager) =>
         if let Some(count) = get_installed_packages(manager) {
@@ -20,12 +40,7 @@ fn main() {
         }
         None => println!("No package manager found"),
     }
-
-    println!("Kernel: {}", kernel);
-    println!("Desktop: {}", desktop);
-    
 }
-
 
 fn get_desktop() -> String {
     let output = {
@@ -59,33 +74,7 @@ fn get_user() -> String {
 
 }
 
-fn get_system_info() -> (String, String, String, String) {
-    let output = {
-        Command::new("sh")
-            .arg("-c")
-            .arg("hostnamectl")
-            .output()
-            .expect("Failed to execute process")
-    };
 
-    let stdout = String::from_utf8(output.stdout).expect("Invalid UTF-8");
-
-    let extract_field =  |field: &str| {
-        stdout
-            .lines()
-            .find(|line| line.trim_start().starts_with(field))
-            .and_then(|line| line.splitn(2, ':').nth(1))
-            .map(|value| value.trim().to_string())
-            .unwrap_or_else(|| "Not found".to_string())
-    };
-
-    let hostname = extract_field("Static hostname");
-    let os = extract_field("Operating System");
-    let architecture = extract_field("Architecture");
-    let kernel = extract_field("Kernel");
-
-    (hostname, os, architecture, kernel)
-}
 
 fn detect_package_manager() -> Option<&'static str> {
     let managers = [
@@ -120,3 +109,31 @@ fn get_installed_packages(manager: &str) -> Option<String> {
     }
 }
 
+
+//fn get_system_info() -> (String, String, String, String) {
+//    let output = {
+//        Command::new("sh")
+//            .arg("-c")
+//            .arg("hostnamectl")
+//            .output()
+//            .expect("Failed to execute process")
+//    };
+//
+//    let stdout = String::from_utf8(output.stdout).expect("Invalid UTF-8");
+//
+//    let extract_field =  |field: &str| {
+//        stdout
+//            .lines()
+//            .find(|line| line.trim_start().starts_with(field))
+//            .and_then(|line| line.splitn(2, ':').nth(1))
+//            .map(|value| value.trim().to_string())
+//            .unwrap_or_else(|| "Not found".to_string())
+//    };
+//
+//    let hostname = extract_field("Static hostname");
+//    let os = extract_field("Operating System");
+//    let architecture = extract_field("Architecture");
+//    let kernel = extract_field("Kernel");
+//
+//    (hostname, os, architecture, kernel)
+//}
