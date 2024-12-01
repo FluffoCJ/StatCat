@@ -3,6 +3,9 @@ use std::io::{self, BufRead};
 use sysinfo::{System, RefreshKind, CpuRefreshKind};
 
 fn main() {
+    let mut system = System::new_all();
+
+
     let username = get_user(); 
     let desktop = get_desktop();
     //let (hostname, os, architecture, kernel) = get_system_info();
@@ -13,8 +16,14 @@ fn main() {
     print_package(); 
     print_cpu_brand();
     println!("Desktop: {}", desktop);
-
     
+    let used_memory_gb = bytes_to_gb(system.used_memory());
+    let total_memory_gb = bytes_to_gb(system.total_memory());
+    println!("Memory: {}GB/{}GB", used_memory_gb, total_memory_gb);
+}
+
+fn bytes_to_gb(bytes: u64) -> f64 {
+    (bytes as f64 / 1_073_741_824.0 * 100.0).round() / 100.0
 }
 
 fn print_cpu_brand() {
