@@ -31,6 +31,28 @@ pub fn print_package() {
     }
 }
 
+pub fn get_shell() -> String {
+    let output = Command::new("ps")
+        .arg("-p")
+        .arg(std::process::id().to_string())
+        .arg("-o")
+        .arg("ppid=")
+        .output()
+        .expect("Failed to execute ps");
+
+    let parent_pid = String::from_utf8_lossy(&output.stdout).trim().to_string();
+
+    let output = Command::new("ps")
+        .arg("-p")
+        .arg(parent_pid)
+        .arg("-o")
+        .arg("comm=")
+        .output()
+        .expect("Failed to execute ps");
+
+    String::from_utf8_lossy(&output.stdout).trim().to_string()
+}
+
 pub fn detect_package_manager() -> Option<&'static str> {
     let managers = [
     ("pacman", "pacman"),

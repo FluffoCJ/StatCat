@@ -58,6 +58,11 @@ fn main() {
                     fetch::print_package();
                 }
             }
+            "shell" => {
+                if config.general.show_shell {
+                    println!("Shell: {}", fetch::get_shell());
+                }
+            }
             _ => {
                     println!("Unknown field: {}", field);
                 }
@@ -80,6 +85,7 @@ fn load_config() -> Config {
         println!("Config file not found. Creating a default one at {:?}", path);
         let default_config = Config {
             general: General {
+                show_shell: true,
                 hostname: true,
                 show_cpu: true,
                 show_memory_usage: true,

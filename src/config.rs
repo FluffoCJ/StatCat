@@ -30,6 +30,8 @@ pub struct General {
     pub show_packages: bool,
     #[serde(default)]
     pub show_os: bool,
+    #[serde(default)]
+    pub show_shell: bool,
 
 }
 
