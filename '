@@ -27,10 +27,9 @@ fn main() {
     for field in &config.order.fields {
         match field.as_str() {
             "hostname" => {
-                let mut icon = config.hostname.icon.clone();
+                let mut &icon = &config.hostname.icon.push(' ');
                 let text = &config.hostname.text;
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}", System::host_name().unwrap_or_default());
+                println!("{:?}{:?}: {}", icon, text, System::host_name().unwrap_or_default());
 
             }
             "cpu" => {
@@ -77,12 +76,7 @@ fn main() {
     }
 }
 
-fn push_icon(mut icon: String) -> String {
-    if !icon.is_empty() {
-        icon.push(' ');
-    }
-    icon
-}
+
 
 
 fn get_config_path() -> PathBuf {

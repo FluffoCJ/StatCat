@@ -1,48 +1,44 @@
 use serde::{Deserialize, Serialize};
 
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Default)]
 pub struct Config {
+    #[serde(default)]
+    pub hostname: HostName,
     pub general: General,
     pub appearance: AppearanceSettings,
     pub order: Order,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct General {
+#[derive(Serialize, Deserialize, Default)]
+pub struct HostName {
     #[serde(default)]
-    pub hostname: bool,
+    pub icon: String,
     #[serde(default)]
-    pub show_cpu: bool,
+    pub text: String,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct Cpu {
     #[serde(default)]
-    pub show_memory_usage: bool,
+    pub icon: String,
     #[serde(default)]
-    pub show_memory_percent_used: bool,
-    #[serde(default)]
-    pub show_memory_percent_free: bool,
-    #[serde(default)]
-    pub show_memory_used: bool,
-    #[serde(default)]
-    pub show_memory_free: bool,
-    #[serde(default)]
-    pub show_memory_total: bool,
-    #[serde(default)]
-    pub show_packages: bool,
-    #[serde(default)]
-    pub show_os: bool,
-    #[serde(default)]
-    pub show_shell: bool,
-    #[serde(default)]
-    pub show_gpu: bool,
+    pub text: String,
 
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct General {
+}
+
+#[derive(Serialize, Deserialize, Default)]
 pub struct AppearanceSettings {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Default)]
 pub struct Order {
     pub fields: Vec<String>,
 }
