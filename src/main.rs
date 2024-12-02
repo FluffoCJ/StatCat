@@ -19,7 +19,6 @@ fn main() {
     
 
     let config = load_config();
-        println!("Loaded Configuration: {:?}", config);
 
     for field in &config.order.fields {
         match field.as_str() {
@@ -54,6 +53,11 @@ fn main() {
                     println!("OS: {}", System::host_name().unwrap_or_default());
                 }
             }
+            "packages" => {
+                if config.general.show_packages {
+                    fetch::print_package();
+                }
+            }
             _ => {
                     println!("Unknown field: {}", field);
                 }
@@ -85,6 +89,7 @@ fn load_config() -> Config {
                 show_memory_used: false,
                 show_memory_free: false,
                 show_os: true,
+                show_packages: true,
             },
             appearance: AppearanceSettings {
 
