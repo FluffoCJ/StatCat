@@ -32,6 +32,8 @@ pub struct General {
     pub show_os: bool,
     #[serde(default)]
     pub show_shell: bool,
+    #[serde(default)]
+    pub show_gpu: bool,
 
 }
 

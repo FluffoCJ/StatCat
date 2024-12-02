@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 dirs = "5.0.1"
+nixinfo = "0.3.3"
 serde = { version = "1.0.215", features = ["derive"] }
 sysinfo = "0.32.1"
 toml = "0.8.19"

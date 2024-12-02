@@ -5,6 +5,8 @@ use sysinfo::{System, RefreshKind, CpuRefreshKind};
 use toml;
 use std::path::PathBuf;
 use std::fs::File;
+use nixinfo::cpu;
+use nixinfo::packages;
 use crate::config::{Config, General, AppearanceSettings, Order};
 
 mod fetch;
@@ -18,6 +20,8 @@ fn main() {
     let desktop = fetch::get_desktop();
     
 
+
+
     let config = load_config();
 
     for field in &config.order.fields {
@@ -30,7 +34,8 @@ fn main() {
             }
             "cpu" => {
                 if config.general.show_cpu {
-                    fetch::print_cpu_brand();
+                    let cpu = nixinfo::cpu();
+                    println!("CPU: {}", nixinfo::cpu().unwrap_or_default());
                 }
             }
             "memory_usage" => {
@@ -55,7 +60,8 @@ fn main() {
             }
             "packages" => {
                 if config.general.show_packages {
-                    fetch::print_package();
+                    let manager = fetch::detect_package_manager();
+                    println!("Packages: {}", nixinfo::packages(manager).unwrap_or_default());
                 }
             }
             "shell" => {
@@ -63,15 +69,20 @@ fn main() {
                     println!("Shell: {}", fetch::get_shell());
                 }
             }
+            "gpu" => {
+                if config.general.show_gpu {
+
+                }
+            }
             _ => {
                     println!("Unknown field: {}", field);
                 }
         }
     }
-
-
-
 }
+
+
+
 
 fn get_config_path() -> PathBuf {
     let config_dir = dirs::config_dir().expect("Unable to determine the config directory");
@@ -96,6 +107,7 @@ fn load_config() -> Config {
                 show_memory_free: false,
                 show_os: true,
                 show_packages: true,
+                show_gpu: true,
             },
             appearance: AppearanceSettings {
 
