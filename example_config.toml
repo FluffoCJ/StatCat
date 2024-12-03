@@ -1,0 +1,37 @@
+[hostname]
+text = "Hostname"
+icon = ""
+
+[cpu]
+text = "CPU"
+icon = ""
+[os]
+text = "OS"
+icon = ""
+[gpu]
+text = "GPU"
+icon = ""
+[cpu_temp]
+text = "Temperature"
+icon = ""
+[terminal]
+text = "Terminal"
+icon = ""
+[uptime]
+text = "Uptime"
+icon = ""
+[shell]
+text = "Shell"
+icon = ""
+[packages]
+text = "Packages"
+icon = ""
+[memory]
+text = "Memory"
+icon = ""
+[desktop]
+text = "Desktop"
+icon = ""
+[order]
+fields = ["hostname", "os", "packages", "terminal",
+"shell", "desktop", "gpu", "cpu", "memory", "uptime"]
