@@ -4,17 +4,14 @@ icon = ""
 [cpu]
 text = "CPU"
 icon = ""
-[os]
-text = "OS"
-icon = ""
 [gpu]
 text = "GPU"
 icon = ""
-[cpu_temp]
-text = "Temperature"
-icon = ""
 [terminal]
 text = "Terminal"
+icon = ""
+[os]
+text = "OS"
 icon = ""
 [uptime]
 text = "Uptime"
