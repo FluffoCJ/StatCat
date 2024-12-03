@@ -5,8 +5,7 @@ use sysinfo::{System, RefreshKind, CpuRefreshKind};
 use toml;
 use std::path::PathBuf;
 use std::fs::File;
-use nixinfo::cpu;
-use nixinfo::packages;
+use nixinfo::{cpu, distro, packages, gpu};
 use crate::config::*;
 
 mod fetch;
@@ -34,40 +33,48 @@ fn main() {
 
             }
             "cpu" => {
+                let mut icon = config.cpu.icon.clone();
+                let text = &config.cpu.text;
                 let cpu = nixinfo::cpu();
-                println!("CPU: {}", nixinfo::cpu().unwrap_or_default());
+                push_icon(icon.clone());
+                println!("{icon}{text}: {}", nixinfo::cpu().unwrap_or_default());
             }
-            "memory_usage" => {
+            "memory" => {
+                // TODO: Add percentage and mb bool
+                // TODO: Add config to display separate used, free, and total memory
                 let used_memory_gb = bytes_to_gb(system.used_memory());
                 let total_memory_gb = bytes_to_gb(system.total_memory());
-                println!("Memory: {}GB/{}GB", used_memory_gb, total_memory_gb); 
-            }
-            // TODO: move this to config option
-            //"memory_percent_used" => {
-            //    let used_memory_gb = bytes_to_gb(system.used_memory());
-            //    let total_memory_gb = bytes_to_gb(system.total_memory()); 
-            //    let used_memory_percent_used = used_memory_gb / total_memory_gb * 100.0;
-            //    println!("Memory used: {}%", used_memory_percent_used.round());
-            //}
-            "total_memory" => {
-                let total_memory_gb = bytes_to_gb(system.total_memory());
-                println!("Memory: {}GB", total_memory_gb); 
-            }
-            "used_memory" => {
-                let used_memory_gb = bytes_to_gb(system.used_memory());
-                println!("Used Memory: {}GB", used_memory_gb);
+                let text = &config.memory.text;
+                let mut icon = config.memory.icon.clone();
+                push_icon(icon.clone());
+                println!("{icon}{text}: {}GB/{}GB", used_memory_gb, total_memory_gb); 
             }
             "os" => {
-                println!("OS: {}", System::host_name().unwrap_or_default());
+                let text = &config.os.text;
+                let mut icon = config.os.icon.clone();
+                let distro = nixinfo::distro().unwrap_or_default();
+                let distro = distro.trim_matches('"');
+                push_icon(icon.clone());
+                println!("{icon}{text}: {}", distro);
             }
             "packages" => {
                 let manager = fetch::detect_package_manager();
-                println!("Packages: {}", nixinfo::packages(manager).unwrap_or_default());
+                let text = &config.packages.text;
+                let mut icon = config.packages.icon.clone();
+                push_icon(icon.clone());
+                println!("{icon}{text}: {}", nixinfo::packages(manager).unwrap_or_default());
             }
             "shell" => {
+                let text = &config.shell.text;
+                let mut icon = config.shell.icon.clone();
+                push_icon(icon.clone());
                 println!("Shell: {}", fetch::get_shell());
             }
             "gpu" => {
+                let text = &config.gpu.text;
+                let mut icon = config.gpu.icon.clone();
+                push_icon(icon.clone());
+                println!("{icon}{text}: {}", nixinfo::gpu().unwrap_or_default());
 
             }
             _ => {
@@ -76,6 +83,7 @@ fn main() {
         }
     }
 }
+
 
 fn push_icon(mut icon: String) -> String {
     if !icon.is_empty() {
@@ -97,7 +105,7 @@ fn load_config() -> Config {
         println!("Config file not found. Creating a default one at {:?}", path);
 
         let default_config = Config {
-            ..Default::default() // Use Serde defaults for the entire structure
+            ..Default::default() 
         };
 
         std::fs::create_dir_all(path.parent().unwrap()).expect("Unable to create config directory");
