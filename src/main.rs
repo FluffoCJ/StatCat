@@ -79,6 +79,12 @@ fn main() {
                 push_icon(icon.clone());
                 println!("{icon}{text}: {}", nixinfo::uptime().unwrap_or_default());
             }
+            "desktop" => {
+                let text = &config.desktop.text;
+                let icon = config.desktop.icon.clone();
+                push_icon(icon.clone());
+                println!("{icon}{text}: {}", nixinfo::environment().unwrap_or_default());
+            }
             _ => {
                     println!("Unknown field: {}", field);
                 }

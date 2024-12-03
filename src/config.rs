@@ -22,6 +22,8 @@ pub struct Config {
     #[serde{default}]
     pub uptime: Uptime,
     #[serde{default}]
+    pub desktop: Desktop,
+    #[serde{default}]
     pub shell: Shell,
 }
 
@@ -72,6 +74,14 @@ pub struct Uptime {
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct Shell {
+    #[serde(default)]
+    pub icon: String,
+    #[serde(default)]
+    pub text: String,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct Desktop {
     #[serde(default)]
     pub icon: String,
     #[serde(default)]
