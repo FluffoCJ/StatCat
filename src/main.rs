@@ -16,81 +16,57 @@ fn main() {
     let config = load_config();
 
     for field in &config.order.fields {
-        match field.as_str() {
-            "hostname" => {
-                let icon = config.hostname.icon.clone();
-                let text = &config.hostname.text;
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}", System::host_name().unwrap_or_default());
-
-            }
-            "cpu" => {
-                let icon = config.cpu.icon.clone();
-                let text = &config.cpu.text;
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}", nixinfo::cpu().unwrap_or_default());
-            }
-            "memory" => {
-                // TODO: Add percentage and mb bool
-                // TODO: Add config to display separate used, free, and total memory
-                let used_memory_gb = bytes_to_gb(system.used_memory());
-                let total_memory_gb = bytes_to_gb(system.total_memory());
-                let text = &config.memory.text;
-                let icon = config.memory.icon.clone();
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}GB/{}GB", used_memory_gb, total_memory_gb); 
-            }
-            "os" => {
-                let text = &config.os.text;
-                let icon = config.os.icon.clone();
-                let distro = nixinfo::distro().unwrap_or_default();
-                let distro = distro.trim_matches('"');
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}", distro);
-            }
-            "packages" => {
-                let manager = fetch::detect_package_manager();
-                let text = &config.packages.text;
-                let icon = config.packages.icon.clone();
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}", nixinfo::packages(manager).unwrap_or_default());
-            }
-            "shell" => {
-                let text = &config.shell.text;
-                let icon = config.shell.icon.clone();
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}", fetch::get_shell());
-            }
-            "gpu" => {
-                let text = &config.gpu.text;
-                let icon = config.gpu.icon.clone();
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}", nixinfo::gpu().unwrap_or_default());
-            }
-            "terminal" => {
-                let text = &config.terminal.text;
-                let icon = config.terminal.icon.clone();
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}", nixinfo::terminal().unwrap_or_default());
-            }
-            "uptime" => {
-                let text = &config.uptime.text;
-                let icon = config.uptime.icon.clone();
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}", nixinfo::uptime().unwrap_or_default());
-            }
-            "desktop" => {
-                let text = &config.desktop.text;
-                let icon = config.desktop.icon.clone();
-                push_icon(icon.clone());
-                println!("{icon}{text}: {}", nixinfo::environment().unwrap_or_default());
-            }
-            _ => {
-                    println!("Unknown field: {}", field);
+        if let Some((text, icon)) = get_icon_text(&config, field) {
+            match field.as_str() {
+                "memory" => {
+                    let used_memory_gb = bytes_to_gb(system.used_memory());
+                    let total_memory_gb = bytes_to_gb(system.total_memory());
+                    push_icon(icon.clone());
+                    println!("{icon}{text}: {}GB/{}GB", used_memory_gb, total_memory_gb);
                 }
+                "os" => {
+                    let distro = nixinfo::distro().unwrap_or_default().trim_matches('"').to_string();
+                    push_icon(icon.clone());
+                    println!("{icon}{text}: {}", distro);
+                }
+                _ => {
+                    let value = match field.as_str() {
+                        "hostname" => System::host_name().unwrap_or_default(),
+                        "cpu" => nixinfo::cpu().unwrap_or_default(),
+                        "packages" => nixinfo::packages(fetch::detect_package_manager()).unwrap_or_default(),
+                        "shell" => fetch::get_shell(),
+                        "gpu" => nixinfo::gpu().unwrap_or_default(),
+                        "terminal" => nixinfo::terminal().unwrap_or_default(),
+                        "uptime" => nixinfo::uptime().unwrap_or_default(),
+                        "desktop" => nixinfo::environment().unwrap_or_default(),
+                        _ => continue,
+                    };
+                    push_icon(icon.clone());
+                    println!("{icon}{text}: {}", value);
+                }
+            }
+        } else {
+            println!("Unknown field: {}", field);
         }
     }
 }
+
+fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, String)> {
+    match field {
+        "os" => Some((&config.os.text, config.os.icon.clone())),
+        "cpu" => Some((&config.cpu.text, config.cpu.icon.clone())),
+        "memory" => Some((&config.memory.text, config.memory.icon.clone())),
+        "hostname" => Some((&config.hostname.text, config.hostname.icon.clone())),
+        "packages" => Some((&config.packages.text, config.packages.icon.clone())),
+        "shell" => Some((&config.shell.text, config.shell.icon.clone())),
+        "gpu" => Some((&config.gpu.text, config.gpu.icon.clone())),
+        "terminal" => Some((&config.terminal.text, config.terminal.icon.clone())),
+        "uptime" => Some((&config.uptime.text, config.uptime.icon.clone())),
+        "desktop" => Some((&config.desktop.text, config.desktop.icon.clone())),
+        _ => None,
+    }
+}
+
 
 
 fn push_icon(mut icon: String) -> String {
