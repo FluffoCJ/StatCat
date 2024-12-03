@@ -11,7 +11,6 @@ macro_rules! define_struct {
         }
     };
 }
-
 define_struct!(OS);
 define_struct!(Gpu);
 define_struct!(Terminal);
@@ -19,7 +18,10 @@ define_struct!(Shell);
 define_struct!(Desktop);
 define_struct!(HostName);
 define_struct!(Cpu);
+define_struct!(Uptime);
+define_struct!(UserName);
 
+// TODO: Add memory_free, memory_total, and memory_used modules
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct Memory {
@@ -34,15 +36,7 @@ pub struct Memory {
 }
 
 
-#[derive(Serialize, Deserialize, Default)]
-pub struct Uptime {
-    #[serde(default)]
-    pub icon: String,
-    #[serde(default)]
-    pub text: String,
-}
-
-
+// TODO: Add display_package_manager bool
 #[derive(Serialize, Deserialize, Default)]
 pub struct Packages {
     #[serde(default)]
@@ -82,6 +76,9 @@ pub struct Config {
     pub desktop: Desktop,
     #[serde(default)]
     pub order: Order,
+    #[serde(default)]
+    pub username: UserName,
+
 }
 
 

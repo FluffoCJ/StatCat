@@ -18,7 +18,10 @@ fn main() {
     for field in &config.order.fields {
         if let Some((text, icon)) = get_icon_text(&config, field) {
             match field.as_str() {
+                // TODO: Add memory_free, memory_total, and memory_used modules
                 "memory" => {
+                    // TODO: Add display_percent bool
+                    // TODO: Add display_mb bool
                     let used_memory_gb = bytes_to_gb(system.used_memory());
                     let total_memory_gb = bytes_to_gb(system.total_memory());
                     push_icon(icon.clone());
@@ -39,6 +42,7 @@ fn main() {
                         "terminal" => nixinfo::terminal().unwrap_or_default(),
                         "uptime" => nixinfo::uptime().unwrap_or_default(),
                         "desktop" => nixinfo::environment().unwrap_or_default(),
+                        "username" => fetch::get_user().to_string(),
                         _ => continue,
                     };
                     push_icon(icon.clone());
@@ -63,6 +67,7 @@ fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, Str
         "terminal" => Some((&config.terminal.text, config.terminal.icon.clone())),
         "uptime" => Some((&config.uptime.text, config.uptime.icon.clone())),
         "desktop" => Some((&config.desktop.text, config.desktop.icon.clone())),
+        "username" => Some((&config.username.text, config.username.icon.clone())), 
         _ => None,
     }
 }
