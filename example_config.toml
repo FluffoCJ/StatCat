@@ -1,7 +1,6 @@
 [hostname]
 text = "Hostname"
 icon = ""
-
 [cpu]
 text = "CPU"
 icon = ""
