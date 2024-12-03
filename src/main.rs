@@ -1,41 +1,32 @@
 #![allow(unused)]
-use std::process::Command;
-use std::io::{BufRead, Read};
-use sysinfo::{System, RefreshKind, CpuRefreshKind};
+use std::io::Read;
+use sysinfo::System;
 use toml;
 use std::path::PathBuf;
 use std::fs::File;
-use nixinfo::{cpu, distro, packages, gpu};
+use nixinfo;
 use crate::config::*;
+
 
 mod fetch;
 mod config;
 
 fn main() {
     let system = System::new_all();
-
-
-    let username = fetch::get_user(); 
-    let desktop = fetch::get_desktop();
-    
-
-
-
     let config = load_config();
 
     for field in &config.order.fields {
         match field.as_str() {
             "hostname" => {
-                let mut icon = config.hostname.icon.clone();
+                let icon = config.hostname.icon.clone();
                 let text = &config.hostname.text;
                 push_icon(icon.clone());
                 println!("{icon}{text}: {}", System::host_name().unwrap_or_default());
 
             }
             "cpu" => {
-                let mut icon = config.cpu.icon.clone();
+                let icon = config.cpu.icon.clone();
                 let text = &config.cpu.text;
-                let cpu = nixinfo::cpu();
                 push_icon(icon.clone());
                 println!("{icon}{text}: {}", nixinfo::cpu().unwrap_or_default());
             }
@@ -45,13 +36,13 @@ fn main() {
                 let used_memory_gb = bytes_to_gb(system.used_memory());
                 let total_memory_gb = bytes_to_gb(system.total_memory());
                 let text = &config.memory.text;
-                let mut icon = config.memory.icon.clone();
+                let icon = config.memory.icon.clone();
                 push_icon(icon.clone());
                 println!("{icon}{text}: {}GB/{}GB", used_memory_gb, total_memory_gb); 
             }
             "os" => {
                 let text = &config.os.text;
-                let mut icon = config.os.icon.clone();
+                let icon = config.os.icon.clone();
                 let distro = nixinfo::distro().unwrap_or_default();
                 let distro = distro.trim_matches('"');
                 push_icon(icon.clone());
@@ -60,22 +51,21 @@ fn main() {
             "packages" => {
                 let manager = fetch::detect_package_manager();
                 let text = &config.packages.text;
-                let mut icon = config.packages.icon.clone();
+                let icon = config.packages.icon.clone();
                 push_icon(icon.clone());
                 println!("{icon}{text}: {}", nixinfo::packages(manager).unwrap_or_default());
             }
             "shell" => {
                 let text = &config.shell.text;
-                let mut icon = config.shell.icon.clone();
+                let icon = config.shell.icon.clone();
                 push_icon(icon.clone());
-                println!("Shell: {}", fetch::get_shell());
+                println!("{icon}{text}: {}", fetch::get_shell());
             }
             "gpu" => {
                 let text = &config.gpu.text;
-                let mut icon = config.gpu.icon.clone();
+                let icon = config.gpu.icon.clone();
                 push_icon(icon.clone());
                 println!("{icon}{text}: {}", nixinfo::gpu().unwrap_or_default());
-
             }
             _ => {
                     println!("Unknown field: {}", field);
