@@ -4,27 +4,27 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Default)]
 pub struct Config {
     #[serde(default)]
-    pub memory: Memory,
-    #[serde(default)]
     pub hostname: HostName,
     #[serde(default)]
     pub cpu: Cpu,
     #[serde(default)]
-    pub packages: Packages,
+    pub gpu: Gpu,
     #[serde(default)]
-    pub order: Order,
+    pub terminal: Terminal,
+    #[serde(default)]
+    pub uptime: Uptime,
     #[serde(default)]
     pub os: OS,
-    #[serde{default}]
-    pub gpu: Gpu,
-    #[serde{default}]
-    pub terminal: Terminal,
-    #[serde{default}]
-    pub uptime: Uptime,
-    #[serde{default}]
-    pub desktop: Desktop,
-    #[serde{default}]
+    #[serde(default)]
     pub shell: Shell,
+    #[serde(default)]
+    pub packages: Packages,
+    #[serde(default)]
+    pub memory: Memory,
+    #[serde(default)]
+    pub desktop: Desktop,
+    #[serde(default)]
+    pub order: Order,
 }
 
 #[derive(Serialize, Deserialize, Default)]
