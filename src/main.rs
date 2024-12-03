@@ -67,6 +67,18 @@ fn main() {
                 push_icon(icon.clone());
                 println!("{icon}{text}: {}", nixinfo::gpu().unwrap_or_default());
             }
+            "terminal" => {
+                let text = &config.terminal.text;
+                let icon = config.terminal.icon.clone();
+                push_icon(icon.clone());
+                println!("{icon}{text}: {}", nixinfo::terminal().unwrap_or_default());
+            }
+            "uptime" => {
+                let text = &config.uptime.text;
+                let icon = config.uptime.icon.clone();
+                push_icon(icon.clone());
+                println!("{icon}{text}: {}", nixinfo::uptime().unwrap_or_default());
+            }
             _ => {
                     println!("Unknown field: {}", field);
                 }

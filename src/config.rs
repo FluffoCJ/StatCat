@@ -18,6 +18,10 @@ pub struct Config {
     #[serde{default}]
     pub gpu: Gpu,
     #[serde{default}]
+    pub terminal: Terminal,
+    #[serde{default}]
+    pub uptime: Uptime,
+    #[serde{default}]
     pub shell: Shell,
 }
 
@@ -48,6 +52,23 @@ pub struct Gpu {
     #[serde(default)]
     pub text: String,
 }
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct Terminal {
+    #[serde(default)]
+    pub icon: String,
+    #[serde(default)]
+    pub text: String,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct Uptime {
+    #[serde(default)]
+    pub icon: String,
+    #[serde(default)]
+    pub text: String,
+}
+
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct Shell {
