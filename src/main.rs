@@ -21,11 +21,18 @@ fn main() {
                 // TODO: Add memory_free, memory_total, and memory_used modules
                 "memory" => {
                     // TODO: Add display_percent bool
-                    // TODO: Add display_mb bool
-                    let used_memory_gb = bytes_to_gb(system.used_memory());
-                    let total_memory_gb = bytes_to_gb(system.total_memory());
+                    let used_memory = bytes_to_gb(system.used_memory());
+                    let total_memory = bytes_to_gb(system.total_memory());
                     push_icon(icon.clone());
-                    println!("{icon}{text}: {}GB/{}GB", used_memory_gb, total_memory_gb);
+
+                    if config.memory.display_mb {
+                        let used_memory = gb_to_mb(used_memory);
+                        let total_memory = gb_to_mb(total_memory);
+                        println!("{icon}{text}: {}MB/{}MB", used_memory, total_memory);
+                    }
+                    else {
+                        println!("{icon}{text}: {}GB/{}GB", used_memory, total_memory);
+                    }
                 }
                 "os" => {
                     let distro = nixinfo::distro().unwrap_or_default().trim_matches('"').to_string();
@@ -54,6 +61,15 @@ fn main() {
         }
     }
 }
+
+fn gb_to_mb(gb: f64) -> f64 {
+    (gb as f64 * 1024.0).round()
+}
+
+fn bytes_to_gb(bytes: u64) -> f64 {
+    (bytes as f64 / 1_073_741_824.0 * 10.0).round() / 10.0
+}
+
 
 fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, String)> {
     match field {
@@ -114,9 +130,5 @@ fn load_config() -> Config {
 }
 
 
-
-fn bytes_to_gb(bytes: u64) -> f64 {
-    (bytes as f64 / 1_073_741_824.0 * 10.0).round() / 10.0
-}
 
 
