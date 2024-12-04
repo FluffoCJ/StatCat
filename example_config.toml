@@ -1,33 +1,51 @@
+# This is the example config. Nerd fonts are required for the icons
+
+[username]
+text = "Username"
+icon = "  "
+color = "red"
 [hostname]
 text = "Hostname"
-icon = ""
-[cpu]
-text = "CPU"
-icon = ""
-[gpu]
-text = "GPU"
-icon = ""
-[terminal]
-text = "Terminal"
-icon = ""
+icon = "󰇅  "
+color = "green"
 [os]
 text = "OS"
-icon = ""
-[uptime]
-text = "Uptime"
-icon = ""
-[shell]
-text = "Shell"
-icon = ""
+icon = "  "
+color = "yellow"
 [packages]
 text = "Packages"
-icon = ""
-[memory]
-text = "Memory"
-icon = ""
+icon = "󰏖  "
+color = "blue"
+[terminal]
+text = "Terminal"
+icon = "  "
+color = "magenta"
+[shell]
+text = "Shell"
+icon = "  "
+color = "cyan"
 [desktop]
 text = "Desktop"
-icon = ""
+icon = "󰍹  "
+color = "bright_black"
+[gpu]
+text = "GPU"
+icon = "  "
+color = "brght_red"
+[cpu]
+text = "CPU"
+icon = "  "
+color = "bright_green"
+[memory]
+text = "Memory"
+icon = "  "
+color = "bright_yellow"
+display_mb = false
+display_percent = false
+[uptime]
+text = "Uptime"
+icon = "  "
+color = "bright_blue"
 [order]
-fields = ["hostname", "os", "packages", "terminal",
+fields = ["username", "hostname", "os", "packages", "terminal",
 "shell", "desktop", "gpu", "cpu", "memory", "uptime"]
