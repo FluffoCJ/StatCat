@@ -44,7 +44,7 @@ fn main() {
                 }
                 _ => {
                     let value = match field.as_str() {
-                        "hostname" => System::host_name().unwrap_or_default(),
+                        "hostname" => fetch::get_hostname().unwrap_or_else(|| "Unknown Host Name".to_string()),
                         "cpu" => fetch::get_cpu().unwrap_or_else(|| "Unknown CPU".to_string()),
                         "packages" => nixinfo::packages(fetch::detect_package_manager()).unwrap_or_default(),
                         "shell" => fetch::get_shell(),

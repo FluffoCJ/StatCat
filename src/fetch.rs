@@ -1,9 +1,10 @@
 use std::process::Command;
 use std::io::BufRead;
+use std::fs::{read_to_string, self};
 use sysinfo::{System, RefreshKind, CpuRefreshKind};
 
 pub fn get_cpu() -> Option<String> {
-    if let Ok(cpuinfo) = std::fs::read_to_string("/proc/cpuinfo") {
+    if let Ok(cpuinfo) = read_to_string("/proc/cpuinfo") {
         for line in cpuinfo.lines() {
             if line.starts_with("model name") {
                 return line.split(':').nth(1).map(|s| s.trim().to_string());
@@ -53,6 +54,13 @@ pub fn detect_package_manager() -> &'static str {
     "None"
 }
 
+
+
+pub fn get_hostname() -> Option<String> {
+    fs::read_to_string("/etc/hostname")
+        .ok()
+        .map(|s| s.trim().to_string())
+}
 
 pub fn get_desktop() -> String {
     std::env::var("XDG_CURRENT_DESKTOP").unwrap_or_else(|_| "Unknown".to_string())
