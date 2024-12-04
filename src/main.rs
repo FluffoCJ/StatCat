@@ -16,31 +16,49 @@ fn main() {
     let config = load_config();
 
     for field in &config.order.fields {
-        if let Some((text, icon)) = get_icon_text(&config, field) {
+        if let Some((text, icon, color)) = get_icon_text(&config, field) {
+            let color_code = match color.as_deref() {
+                Some("black") => "\x1b[30m",
+                Some("red") => "\x1b[31m",
+                Some("green") => "\x1b[32m",
+                Some("yellow") => "\x1b[33m",
+                Some("blue") => "\x1b[34m",
+                Some("magenta") => "\x1b[35m",
+                Some("cyan") => "\x1b[36m",
+                Some("white") => "\x1b[37m",
+                Some("bright_black") => "\x1b[90m",
+                Some("bright_red") => "\x1b[91m",
+                Some("bright_green") => "\x1b[92m",
+                Some("bright_yellow") => "\x1b[93m",
+                Some("bright_blue") => "\x1b[94m",
+                Some("bright_magenta") => "\x1b[95m",
+                Some("bright_cyan") => "\x1b[96m",
+                Some("bright_white") => "\x1b[97m",
+                _ => "\x1b[0m", 
+            };
+
+
             match field.as_str() {
-                // TODO: Add memory_free, memory_total, and memory_used modules
                 "memory" => {
                     let used_memory = bytes_to_gb(system.used_memory());
                     let total_memory = bytes_to_gb(system.total_memory());
-                    push_icon(icon.clone());
 
                     if config.memory.display_mb {
                         let used_memory = gb_to_mb(used_memory);
                         let total_memory = gb_to_mb(total_memory);
-                        println!("{icon}{text}: {}MB/{}MB", used_memory, total_memory);
+                        println!("\x1b[1m{color_code}{icon}{text}: {}MB/{}MB\x1b[0m", used_memory, total_memory);
                     }
                     else if config.memory.display_percent {
                         let used_memory = (used_memory / total_memory) * 100.0;
-                        println!("{icon}{text}: {}%", used_memory.round());
+                        println!("\x1b[1m{color_code}{icon}{text}: {}%\x1b[0m", used_memory.round());
                     }
                     else {
-                        println!("{icon}{text}: {}GB/{}GB", used_memory, total_memory);
+                        println!("\x1b[1m{color_code}{icon}{text}: {}GB/{}GB\x1b[0m", used_memory, total_memory);
                     }
                 }
                 "os" => {
                     let distro = nixinfo::distro().unwrap_or_default().trim_matches('"').to_string();
-                    push_icon(icon.clone());
-                    println!("{icon}{text}: {}", distro);
+                    println!("\x1b[1m{color_code}{icon}{text}: {distro}\x1b[0m");
                 }
                 _ => {
                     let value = match field.as_str() {
@@ -55,8 +73,7 @@ fn main() {
                         "username" => fetch::get_user().to_string(),
                         _ => continue,
                     };
-                    push_icon(icon.clone());
-                    println!("{icon}{text}: {}", value);
+                    println!("\x1b[1m{color_code}{icon}{text}: {value}\x1b[0m");
                 }
             }
         } else {
@@ -64,6 +81,7 @@ fn main() {
         }
     }
 }
+
 
 fn gb_to_mb(gb: f64) -> f64 {
     (gb as f64 * 1024.0).round()
@@ -74,31 +92,24 @@ fn bytes_to_gb(bytes: u64) -> f64 {
 }
 
 
-fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, String)> {
+fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, String, Option<String>)> {
     match field {
-        "os" => Some((&config.os.text, config.os.icon.clone())),
-        "cpu" => Some((&config.cpu.text, config.cpu.icon.clone())),
-        "memory" => Some((&config.memory.text, config.memory.icon.clone())),
-        "hostname" => Some((&config.hostname.text, config.hostname.icon.clone())),
-        "packages" => Some((&config.packages.text, config.packages.icon.clone())),
-        "shell" => Some((&config.shell.text, config.shell.icon.clone())),
-        "gpu" => Some((&config.gpu.text, config.gpu.icon.clone())),
-        "terminal" => Some((&config.terminal.text, config.terminal.icon.clone())),
-        "uptime" => Some((&config.uptime.text, config.uptime.icon.clone())),
-        "desktop" => Some((&config.desktop.text, config.desktop.icon.clone())),
-        "username" => Some((&config.username.text, config.username.icon.clone())), 
+        "os" => Some((&config.os.text, config.os.icon.clone(), config.os.color.clone())),
+        "cpu" => Some((&config.cpu.text, config.cpu.icon.clone(), config.cpu.color.clone())),
+        "memory" => Some((&config.memory.text, config.memory.icon.clone(), config.memory.color.clone())),
+        "hostname" => Some((&config.hostname.text, config.hostname.icon.clone(), config.hostname.color.clone())),
+        "packages" => Some((&config.packages.text, config.packages.icon.clone(), config.packages.color.clone())),
+        "shell" => Some((&config.shell.text, config.shell.icon.clone(), config.shell.color.clone())),
+        "gpu" => Some((&config.gpu.text, config.gpu.icon.clone(), config.gpu.color.clone())),
+        "terminal" => Some((&config.terminal.text, config.terminal.icon.clone(), config.terminal.color.clone())),
+        "uptime" => Some((&config.uptime.text, config.uptime.icon.clone(), config.uptime.color.clone())),
+        "desktop" => Some((&config.desktop.text, config.desktop.icon.clone(), config.desktop.color.clone())),
+        "username" => Some((&config.username.text, config.username.icon.clone(), config.username.color.clone())),
         _ => None,
     }
 }
 
 
-
-fn push_icon(mut icon: String) -> String {
-    if !icon.is_empty() {
-        icon.push(' ');
-    }
-    icon
-}
 
 
 fn get_config_path() -> PathBuf {

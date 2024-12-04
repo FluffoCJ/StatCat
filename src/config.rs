@@ -8,6 +8,8 @@ macro_rules! define_struct {
             pub icon: String,
             #[serde(default)]
             pub text: String,
+            #[serde(default)]
+            pub color: Option<String>,
         }
     };
 }
@@ -33,6 +35,8 @@ pub struct Memory {
     pub display_percent: bool,
     #[serde(default)]
     pub display_mb: bool,
+    #[serde(default)]
+    pub color: Option<String>,
 }
 
 
@@ -43,6 +47,8 @@ pub struct Packages {
     pub icon: String,
     #[serde(default)]
     pub text: String,
+    #[serde(default)]
+    pub color: Option<String>,
 
 }
 
