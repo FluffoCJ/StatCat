@@ -30,7 +30,7 @@ pub struct Memory {
     #[serde(default)]
     pub text: String,
     #[serde(default)]
-    pub percent: bool,
+    pub display_percent: bool,
     #[serde(default)]
     pub display_mb: bool,
 }

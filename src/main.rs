@@ -30,6 +30,10 @@ fn main() {
                         let total_memory = gb_to_mb(total_memory);
                         println!("{icon}{text}: {}MB/{}MB", used_memory, total_memory);
                     }
+                    else if config.memory.display_percent {
+                        let used_memory = (used_memory / total_memory) * 100.0;
+                        println!("{icon}{text}: {}%", used_memory.round());
+                    }
                     else {
                         println!("{icon}{text}: {}GB/{}GB", used_memory, total_memory);
                     }
