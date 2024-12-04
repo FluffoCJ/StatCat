@@ -15,6 +15,7 @@ pub fn get_cpu() -> Option<String> {
 }
 
 
+
 pub fn get_shell() -> String {
     let output = Command::new("ps")
         .arg("-p")
@@ -54,7 +55,16 @@ pub fn detect_package_manager() -> &'static str {
     "None"
 }
 
-
+pub fn get_uptime() -> Option<String> {
+    if let Ok(content) = fs::read_to_string("/proc/uptime") {
+        if let Some(uptime_seconds) = content.split_whitespace().next()?.parse::<f64>().ok() {
+            let hours = (uptime_seconds / 3600.0).floor();
+            let minutes = ((uptime_seconds % 3600.0) / 60.0).floor();
+            return Some(format!("{}h {}m", hours, minutes));
+        }
+    }
+    None
+}
 
 pub fn get_hostname() -> Option<String> {
     fs::read_to_string("/etc/hostname")
