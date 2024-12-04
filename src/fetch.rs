@@ -2,6 +2,16 @@ use std::process::Command;
 use std::io::BufRead;
 use sysinfo::{System, RefreshKind, CpuRefreshKind};
 
+pub fn get_cpu() -> Option<String> {
+    if let Ok(cpuinfo) = std::fs::read_to_string("/proc/cpuinfo") {
+        for line in cpuinfo.lines() {
+            if line.starts_with("model name") {
+                return line.split(':').nth(1).map(|s| s.trim().to_string());
+            }
+        }
+    }
+    None
+}
 
 
 pub fn get_shell() -> String {

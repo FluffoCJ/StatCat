@@ -20,7 +20,6 @@ fn main() {
             match field.as_str() {
                 // TODO: Add memory_free, memory_total, and memory_used modules
                 "memory" => {
-                    // TODO: Add display_percent bool
                     let used_memory = bytes_to_gb(system.used_memory());
                     let total_memory = bytes_to_gb(system.total_memory());
                     push_icon(icon.clone());
@@ -46,7 +45,7 @@ fn main() {
                 _ => {
                     let value = match field.as_str() {
                         "hostname" => System::host_name().unwrap_or_default(),
-                        "cpu" => nixinfo::cpu().unwrap_or_default(),
+                        "cpu" => fetch::get_cpu().unwrap_or_else(|| "Unknown CPU".to_string()),
                         "packages" => nixinfo::packages(fetch::detect_package_manager()).unwrap_or_default(),
                         "shell" => fetch::get_shell(),
                         "gpu" => nixinfo::gpu().unwrap_or_default(),
