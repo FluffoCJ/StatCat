@@ -6,6 +6,7 @@ use std::path::PathBuf;
 use std::fs::File;
 use nixinfo;
 use crate::config::*;
+use chrono::Local;
 
 
 mod fetch;
@@ -56,6 +57,12 @@ fn main() {
                         println!("\x1b[1m{color_code}{icon}{text}: {}GB/{}GB\x1b[0m", used_memory, total_memory);
                     }
                 }
+                "time_date" => {
+                    let now = Local::now();
+                    let formatted = now.format(config.time_date.format.as_str()).to_string(); 
+                    println!("\x1b[1m{color_code}{icon}{text}: {formatted}");
+ 
+                }
                 "os" => {
                     let distro = nixinfo::distro().unwrap_or_default().trim_matches('"').to_string();
                     println!("\x1b[1m{color_code}{icon}{text}: {distro}\x1b[0m");
@@ -105,6 +112,8 @@ fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, Str
         "uptime" => Some((&config.uptime.text, config.uptime.icon.clone(), config.uptime.color.clone())),
         "desktop" => Some((&config.desktop.text, config.desktop.icon.clone(), config.desktop.color.clone())),
         "username" => Some((&config.username.text, config.username.icon.clone(), config.username.color.clone())),
+        "time_date" => Some((&config.time_date.text, config.time_date.icon.clone(), config.time_date.color.clone())),
+
         _ => None,
     }
 }

@@ -49,8 +49,20 @@ pub struct Packages {
     pub text: String,
     #[serde(default)]
     pub color: Option<String>,
-
 }
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct TimeDate {
+    #[serde(default)]
+    pub icon: String,
+    #[serde(default)]
+    pub text: String,
+    #[serde(default)]
+    pub color: Option<String>,
+    #[serde(default)]
+    pub format: String,
+}
+
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct Order {
@@ -84,6 +96,8 @@ pub struct Config {
     pub order: Order,
     #[serde(default)]
     pub username: UserName,
+    #[serde(default)]
+    pub time_date: TimeDate,
 
 }
 
