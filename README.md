@@ -1,4 +1,4 @@
-# Fetchd - Work in progress system fetch written in rust.
+# StatCat - Work in progress system fetch written in rust.
 
 
 
