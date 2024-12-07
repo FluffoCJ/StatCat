@@ -123,7 +123,7 @@ fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, Str
 
 fn get_config_path() -> PathBuf {
     let config_dir = dirs::config_dir().expect("Unable to determine the config directory");
-    config_dir.join("fetchd").join("config.toml")
+    config_dir.join("catnap").join("config.toml")
 }
 
 fn load_config() -> Config {
