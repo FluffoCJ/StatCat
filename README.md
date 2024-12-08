@@ -20,10 +20,10 @@ If you wanna try or use this for whatever reason create a config file at ~/.conf
 ##### Work in Progress
 - Memory Modules
 - Battery Modules (WIP, I don't have a laptop to test on)
+- Decoration options
 
 ##### Planned
 - Colors module
-- Decoration options
 - Custom separator in config
 - Custom modules to display text
 - images
