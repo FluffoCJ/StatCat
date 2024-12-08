@@ -72,14 +72,16 @@ fn main() {
                     let manager = Manager::new().unwrap();
                     for (idx, battery) in manager.batteries().unwrap().enumerate() {
                         let battery = battery.unwrap();
-                        println!("Battery {}:", idx + 1);
-                        println!("  State: {:?}", battery.state());
-                        println!("  Charge: {:.2}%", battery.state_of_charge().value * 100.0);
-                        println!("  Energy: {:.2} Wh", battery.energy().value);
-                        println!("  Energy Full: {:.2} Wh", battery.energy_full().value);
-                        println!("  Voltage: {:.2} V", battery.voltage().value);
+                        if config.battery.percentage {
+                            // Percentage
+                            println!("\x1b[1m{color_code}{icon}{text}: {:.2}%\x1b[0m", battery.state_of_charge().value * 100.0);
+                        }
+                        if config.battery.charging_state {
+                            // Charging state
+                            println!("\x1b[1m{color_code}{icon}{text}: {:?}\x1b[0m", battery.state());
+                        }
                     }
-}
+                }
                 _ => {
                     let value = match field.as_str() {
                         "hostname" => fetch::get_hostname().unwrap_or_else(|| "Unknown Host Name".to_string()),
@@ -126,6 +128,7 @@ fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, Str
         "desktop" => Some((&config.desktop.text, config.desktop.icon.clone(), config.desktop.color.clone())),
         "username" => Some((&config.username.text, config.username.icon.clone(), config.username.color.clone())),
         "time_date" => Some((&config.time_date.text, config.time_date.icon.clone(), config.time_date.color.clone())),
+        "battery" => Some((&config.battery.text, config.battery.icon.clone(), config.battery.color.clone())),
 
         _ => None,
     }
