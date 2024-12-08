@@ -17,6 +17,29 @@ fn main() {
     let system = System::new_all();
     let config = load_config();
 
+    let mut border_char = "";
+    let mut corner_char = "";
+    let mut end_corner_char = "";
+    let mut bottom_left = "";
+    let mut bottom_right = "";
+    let mut separator = config.general.separator.to_string();
+    let r = "\x1b[0m";
+    let mut pad = 0;
+    let mut side = "";
+
+    if config.general.decoration == "nitch" {
+        border_char = "─";
+        corner_char = "╭";
+        end_corner_char = "╮";
+        bottom_left = "╰";
+        bottom_right = "╯"; 
+        separator = "│".to_string();
+        pad = 10;
+        side = "│  ";
+        println!("╭────────────────╮");
+    }
+
+
     for field in &config.order.fields {
         if let Some((text, icon, color)) = get_icon_text(&config, field) {
             let color_code = match color.as_deref() {
@@ -48,25 +71,40 @@ fn main() {
                     if config.memory.display_mb {
                         let used_memory = gb_to_mb(used_memory);
                         let total_memory = gb_to_mb(total_memory);
-                        println!("\x1b[1m{color_code}{icon}{text}: {}MB/{}MB\x1b[0m", used_memory, total_memory);
+                        println!(
+                        "{side}{color_code}{icon} {:<pad$}{r}│ MB/{total_memory}MB\x1b[0m",
+                        text,
+                        );
                     }
                     else if config.memory.display_percent {
                         let used_memory = (used_memory / total_memory) * 100.0;
-                        println!("\x1b[1m{color_code}{icon}{text}: {}%\x1b[0m", used_memory.round());
+                        println!(
+                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {used_memory}%\x1b[0m",
+                        text,
+                        );
                     }
                     else {
-                        println!("\x1b[1m{color_code}{icon}{text}: {}GB/{}GB\x1b[0m", used_memory, total_memory);
+                        println!(
+                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {used_memory}GB/{total_memory}GB\x1b[0m",
+                        text,
+                        );
                     }
                 }
                 "time_date" => {
                     let now = Local::now();
                     let formatted = now.format(config.time_date.format.as_str()).to_string(); 
-                    println!("\x1b[1m{color_code}{icon}{text}: {formatted}");
+                    println!(
+                    "{side}{color_code}{icon} {:<pad$}{r}{separator} {formatted}",
+                    text, 
+                    );
  
                 }
                 "os" => {
                     let distro = nixinfo::distro().unwrap_or_default().trim_matches('"').to_string();
-                    println!("\x1b[1m{color_code}{icon}{text}: {distro}\x1b[0m");
+                    println!(
+                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {distro}\x1b[0m",
+                        text,
+                    );
                 }
                 "battery" => {
                     let manager = Manager::new().unwrap();
@@ -74,11 +112,18 @@ fn main() {
                         let battery = battery.unwrap();
                         if config.battery.percentage {
                             // Percentage
-                            println!("\x1b[1m{color_code}{icon}{text}: {:.2}%\x1b[0m", battery.state_of_charge().value * 100.0);
+                            println!(
+                            "{side}{color_code}{icon} {:<pad$}{r}{separator} {:.2}", battery.state_of_charge().value * 100.0,
+                            text,
+                            );
+
                         }
                         if config.battery.charging_state {
                             // Charging state
-                            println!("\x1b[1m{color_code}{icon}{text}: {:?}\x1b[0m", battery.state());
+                            println!(
+                            "{side}{color_code}{icon} {:<pad$}{r}{separator} {:?}", battery.state(),
+                            text,
+                        );
                         }
                     }
                 }
@@ -94,12 +139,13 @@ fn main() {
                         "\x1b[35m", // Magenta
                         "\x1b[30m", // Black
                     ];
-                    print!("\x1b[1m{color_code}{icon}{text}: \x1b[0m");
+                
+                    print!("{side}{color_code}{icon} \x1b[0m{:<pad$}{separator}\x1b[0m", text);
+                
                     for element in colors {
-                        print!("{element} {color_icon}\x1b[0m");
+                        print!("{element} {color_icon}\x1b[0m ");
                     }
                     println!();
-
                 }
                 _ => {
                     let value = match field.as_str() {
@@ -114,12 +160,21 @@ fn main() {
                         "username" => fetch::get_user().to_string(),
                         _ => continue,
                     };
-                    println!("\x1b[1m{color_code}{icon}{text}: {value}\x1b[0m");
+                    println!(
+                    "{side}{color_code}{icon} {:<pad$}{r}{separator} {value}\x1b[0m",
+                    text,
+                    );
                 }
             }
-        } else {
+        } 
+        else {
             println!("Unknown field: {}", field);
         }
+
+        
+    }
+    if config.general.decoration == "nitch" {
+        println!("╰────────────────╯");
     }
 }
 

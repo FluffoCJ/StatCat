@@ -91,6 +91,14 @@ pub struct Colors {
 
 
 #[derive(Serialize, Deserialize, Default)]
+pub struct General {
+    #[serde(default)]
+    pub decoration: String,
+    #[serde(default)]
+    pub separator: String,
+}
+
+#[derive(Serialize, Deserialize, Default)]
 pub struct Order {
     pub fields: Vec<String>,
 }
@@ -98,6 +106,8 @@ pub struct Order {
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct Config {
+    #[serde(default)]
+    pub general: General,
     #[serde(default)]
     pub hostname: HostName,
     #[serde(default)]
