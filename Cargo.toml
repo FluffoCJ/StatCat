@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+battery = "0.7.8"
 chrono = "0.4.38"
 dirs = "5.0.1"
 nixinfo = "0.3.3"
