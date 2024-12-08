@@ -132,15 +132,15 @@ fn main() {
                     let colors = [
                         "\x1b[90m", // Bright black
                         "\x1b[31m", // Red
-                        "\x1b[32m", // Green
                         "\x1b[33m", // Yellow
+                        "\x1b[32m", // Green
                         "\x1b[36m", // Cyan
                         "\x1b[34m", // Blue
                         "\x1b[35m", // Magenta
                         "\x1b[30m", // Black
                     ];
                 
-                    print!("{side}{color_code}{icon} \x1b[0m{:<pad$}{separator}\x1b[0m", text);
+                    print!("{side}{color_code}{icon} {:<pad$}{r}{separator}", text);
                 
                     for element in colors {
                         print!("{element} {color_icon}\x1b[0m ");
