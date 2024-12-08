@@ -46,6 +46,19 @@ display_percent = false
 text = "Uptime"
 icon = "  "
 color = "bright_blue"
+# WIP. MAY NOT WORK.
+#[battery]
+#text = "Battery"
+#color = "magenta"
+#percentage = true
+#charging_state = true
+[colors]
+text = "Colors"
+color = "magenta"
+icon = "  "
+color_icon = "󰣏"
 [order]
 fields = ["username", "hostname", "os", "packages", "terminal",
-"shell", "desktop", "gpu", "cpu", "memory", "uptime"]
+"shell", "desktop", "gpu", "cpu", "memory", "uptime", "battery",
+"colors"]
+
