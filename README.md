@@ -18,7 +18,8 @@ If you wanna try or use this for whatever reason create a config file at ~/.conf
 - Date time module
 
 ##### Work in Progress
-- Memory Module
+- Memory Modules
+- Battery Modules (WIP, I don't have a laptop to test on)
 
 ##### Planned
 - Colors module
