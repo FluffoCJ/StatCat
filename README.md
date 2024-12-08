@@ -6,7 +6,7 @@ curl -sL https://raw.githubusercontent.com/fluffocj/statcat/main/install.sh | ba
 ```
 
 <details>
-  <summary>Click to see the image</summary>
+  <summary>Image</summary>
 
   ![Example](/images/image.png)
 
