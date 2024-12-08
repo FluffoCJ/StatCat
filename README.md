@@ -1,5 +1,11 @@
 # StatCat - Work in progress system fetch written in rust.
-If you wanna try or use this for whatever reason create a config file at ~/.config/statcat/config.toml and copy the example config.
+
+Install
+```
+curl -sL https://raw.githubusercontent.com/fluffocj/statcat/main/install.sh | bash
+```
+
+
 
 # Features
 ##### Implemented
