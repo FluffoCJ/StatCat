@@ -82,6 +82,25 @@ fn main() {
                         }
                     }
                 }
+                "colors" => {
+                    let color_icon = &config.colors.color_icon;
+                    let colors = [
+                        "\x1b[90m", // Bright black
+                        "\x1b[31m", // Red
+                        "\x1b[32m", // Green
+                        "\x1b[33m", // Yellow
+                        "\x1b[36m", // Cyan
+                        "\x1b[34m", // Blue
+                        "\x1b[35m", // Magenta
+                        "\x1b[30m", // Black
+                    ];
+                    print!("\x1b[1m{color_code}{icon}{text}: \x1b[0m");
+                    for element in colors {
+                        print!("{element} {color_icon}\x1b[0m");
+                    }
+                    println!();
+
+                }
                 _ => {
                     let value = match field.as_str() {
                         "hostname" => fetch::get_hostname().unwrap_or_else(|| "Unknown Host Name".to_string()),
@@ -129,6 +148,7 @@ fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, Str
         "username" => Some((&config.username.text, config.username.icon.clone(), config.username.color.clone())),
         "time_date" => Some((&config.time_date.text, config.time_date.icon.clone(), config.time_date.color.clone())),
         "battery" => Some((&config.battery.text, config.battery.icon.clone(), config.battery.color.clone())),
+        "colors" => Some((&config.colors.text, config.colors.icon.clone(), config.colors.color.clone())),
 
         _ => None,
     }

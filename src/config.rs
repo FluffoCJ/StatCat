@@ -77,6 +77,18 @@ pub struct Battery {
     pub percentage: bool,
 }
 
+#[derive(Serialize, Deserialize, Default)]
+pub struct Colors {
+    #[serde(default)]
+    pub icon: String,
+    #[serde(default)]
+    pub text: String,
+    #[serde(default)]
+    pub color: Option<String>,
+    #[serde(default)]
+    pub color_icon: String,
+}
+
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct Order {
@@ -114,6 +126,8 @@ pub struct Config {
     pub time_date: TimeDate,
     #[serde(default)]
     pub battery: Battery,
+    #[serde(default)]
+    pub colors: Colors,
 
 }
 
