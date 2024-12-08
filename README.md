@@ -7,10 +7,11 @@ curl -sL https://raw.githubusercontent.com/fluffocj/statcat/main/install.sh | ba
 
 <details>
   <summary>Click to see the image</summary>
-  
-  ![Alt text]([https://example.com/image-url.png](https://github.com/FluffoCJ/StatCat/blob/main/images/image.png))
-  
+
+  ![Example](/images/image.png)
+
 </details>
+
 
 
 
