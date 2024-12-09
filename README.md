@@ -24,7 +24,7 @@ Until I create documentation; you can see available config options [here](https:
 - Hostname
 - Username
 - Package count
-- CPU_Brand Module
+- CPU Module
 - Shell
 - Gpu Module
 - Uptime module
