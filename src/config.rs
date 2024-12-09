@@ -96,6 +96,8 @@ pub struct General {
     pub decoration: String,
     #[serde(default)]
     pub separator: String,
+    #[serde(default)]
+    pub padding: usize,
 }
 
 #[derive(Serialize, Deserialize, Default)]

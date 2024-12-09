@@ -25,7 +25,7 @@ fn main() {
     let mut bottom_right = "";
     let mut separator = config.general.separator.to_string();
     let r = "\x1b[0m";
-    let mut pad = 0;
+    let mut pad = config.general.padding;
     let mut side = "";
 
     if config.general.decoration == "nitch" {
