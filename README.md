@@ -19,6 +19,8 @@ Until I create documentation, you can see available config options [here](https:
 
 # Features
 ##### Implemented
+- Allow hex codes for colors
+- Custom separator in config
 - Colors module
 - Kernel
 - Distro Name
@@ -40,13 +42,10 @@ Until I create documentation, you can see available config options [here](https:
 - Decoration options
 
 ##### Planned
-- Allow hex codes for colors
-- Custom separator in config
 - Custom modules to display text
 - images
 - Storage module
-- Battery module
 - Media module
-- Distro art
+- ASCII art
 - local ip
 - Package updates available ???
