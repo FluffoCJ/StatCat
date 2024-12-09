@@ -19,6 +19,7 @@ Until I create documentation, you can see available config options [here](https:
 
 # Features
 ##### Implemented
+- Colors module
 - Kernel
 - Distro Name
 - Hostname
@@ -39,7 +40,7 @@ Until I create documentation, you can see available config options [here](https:
 - Decoration options
 
 ##### Planned
-- Colors module
+- Allow hex codes for colors
 - Custom separator in config
 - Custom modules to display text
 - images
