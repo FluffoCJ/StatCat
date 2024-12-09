@@ -8,6 +8,7 @@ use nixinfo;
 use crate::config::*;
 use chrono::Local;
 use battery::Manager;
+use termion;
 
 
 mod fetch;
@@ -42,25 +43,39 @@ fn main() {
 
     for field in &config.order.fields {
         if let Some((text, icon, color)) = get_icon_text(&config, field) {
-            let color_code = match color.as_deref() {
-                Some("black") => "\x1b[30m",
-                Some("red") => "\x1b[31m",
-                Some("green") => "\x1b[32m",
-                Some("yellow") => "\x1b[33m",
-                Some("blue") => "\x1b[34m",
-                Some("magenta") => "\x1b[35m",
-                Some("cyan") => "\x1b[36m",
-                Some("white") => "\x1b[37m",
-                Some("bright_black") => "\x1b[90m",
-                Some("bright_red") => "\x1b[91m",
-                Some("bright_green") => "\x1b[92m",
-                Some("bright_yellow") => "\x1b[93m",
-                Some("bright_blue") => "\x1b[94m",
-                Some("bright_magenta") => "\x1b[95m",
-                Some("bright_cyan") => "\x1b[96m",
-                Some("bright_white") => "\x1b[97m",
-                _ => "\x1b[0m", 
+            let color_code = if let Some(color) = color {
+                if let Some(hex) = color.strip_prefix('#') {
+                    if let Ok((r, g, b)) = parse_hex_color(hex) {
+                        format!("\x1b[38;2;{};{};{}m", r, g, b)
+                    } else {
+                        "\x1b[0m".to_string()
+                    }
+                } else {
+                    match color.as_str() {
+                        "black" => "\x1b[30m".to_string(),
+                        "red" => "\x1b[31m".to_string(),
+                        "green" => "\x1b[32m".to_string(),
+                        "yellow" => "\x1b[33m".to_string(),
+                        "blue" => "\x1b[34m".to_string(),
+                        "magenta" => "\x1b[35m".to_string(),
+                        "cyan" => "\x1b[36m".to_string(),
+                        "white" => "\x1b[37m".to_string(),
+                        "bright_black" => "\x1b[90m".to_string(),
+                        "bright_red" => "\x1b[91m".to_string(),
+                        "bright_green" => "\x1b[92m".to_string(),
+                        "bright_yellow" => "\x1b[93m".to_string(),
+                        "bright_blue" => "\x1b[94m".to_string(),
+                        "bright_magenta" => "\x1b[95m".to_string(),
+                        "bright_cyan" => "\x1b[96m".to_string(),
+                        "bright_white" => "\x1b[97m".to_string(),
+                        _ => "\x1b[0m".to_string(),
+                    }
+                }
+            } else {
+                "\x1b[0m".to_string()
             };
+
+
 
 
             match field.as_str() {
@@ -170,11 +185,21 @@ fn main() {
         else {
             println!("Unknown field: {}", field);
         }
-
-        
     }
     if config.general.decoration == "nitch" {
         println!("╰────────────────╯");
+    }
+}
+
+
+fn parse_hex_color(hex: &str) -> Result<(u8, u8, u8), &'static str> {
+    if hex.len() == 6 {
+        let r = u8::from_str_radix(&hex[0..2], 16).map_err(|_| "Invalid hex format")?;
+        let g = u8::from_str_radix(&hex[2..4], 16).map_err(|_| "Invalid hex format")?;
+        let b = u8::from_str_radix(&hex[4..6], 16).map_err(|_| "Invalid hex format")?;
+        Ok((r, g, b))
+    } else {
+        Err("Hex color must be 6 characters")
     }
 }
 
