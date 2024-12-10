@@ -2,6 +2,12 @@ use std::process::Command;
 use std::io::BufRead;
 use std::fs::{read_to_string, self};
 use sysinfo::{System, RefreshKind, CpuRefreshKind};
+use std::path::PathBuf;
+use std::fs::File;
+use std::io::Read;
+use crate::config::*;
+
+use crate::main;
 
 pub fn get_cpu() -> Option<String> {
     if let Ok(cpuinfo) = read_to_string("/proc/cpuinfo") {
@@ -57,6 +63,24 @@ pub fn detect_package_manager() -> &'static str {
     "None"
 }
 
+pub fn get_figlet() -> Result<String, String> {
+    let config = load_config();
+    let output = Command::new("figlet")
+        .arg({config.general.figlet_text})
+        .output();
+
+    match output {
+        Ok(output) => {
+            if !output.stdout.is_empty() {
+                Ok(String::from_utf8_lossy(&output.stdout).to_string())
+            } else {
+                Err("No output from the command".to_string())
+            }
+        }
+        Err(e) => Err(format!("Error running command: {}", e)),
+    }
+}
+
 pub fn get_uptime() -> Option<String> {
     if let Ok(content) = fs::read_to_string("/proc/uptime") {
         if let Some(uptime_seconds) = content.split_whitespace().next()?.parse::<f64>().ok() {
@@ -80,4 +104,35 @@ pub fn get_desktop() -> String {
 
 pub fn get_user() -> String {
     std::env::var("USER").unwrap_or_else(|_| "Unknown".to_string())
+}
+
+fn get_config_path() -> PathBuf {
+    let config_dir = dirs::config_dir().expect("Unable to determine the config directory");
+    config_dir.join("statcat").join("config.toml")
+}
+
+pub fn load_config() -> Config {
+    let path = get_config_path();
+
+    if !path.exists() {
+        println!("Config file not found. Creating a default one at {:?}", path);
+
+        let default_config = Config {
+            ..Default::default() 
+        };
+
+        std::fs::create_dir_all(path.parent().unwrap()).expect("Unable to create config directory");
+        let mut file = File::create(&path).expect("Unable to create config file");
+        let toml_str = toml::to_string(&default_config).expect("Error serializing config");
+        use std::io::Write;
+        file.write_all(toml_str.as_bytes()).expect("Error writing default config");
+
+        return default_config;
+    }
+
+    let mut file = File::open(&path).expect("Unable to open config file");
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).expect("Unable to read config file");
+
+    toml::from_str(&contents).expect("Error parsing config file")
 }

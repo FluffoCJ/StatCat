@@ -9,20 +9,31 @@ use crate::config::*;
 use chrono::Local;
 use battery::Manager;
 
-
 mod fetch;
 mod config;
+
+
 
 fn main() {
     let mut system = System::new();
     system.refresh_memory();
-    let config = load_config();
+    let config = fetch::load_config();
 
 
     let mut separator = config.general.separator.to_string();
     let r = "\x1b[0m";
     let mut pad = config.general.padding;
     let mut side = "";
+
+
+    if config.general.figlet == true {
+        let text = fetch::get_figlet().unwrap_or_default();
+        let text = text.lines().take(text.lines().count() - 1).collect::<Vec<_>>().join("\n");
+        let color = config.general.figlet_color.clone().unwrap_or_default(); 
+        let color_code = get_color_code(&color);
+        println!("{color_code}{text}\x1b[0m");
+    }
+
 
     if config.general.decoration == "border" {
 
@@ -32,38 +43,15 @@ fn main() {
         println!("╭────────────────╮");
     }
 
+    
+    
 
     for field in &config.order.fields {
         if let Some((text, icon, color)) = get_icon_text(&config, field) {
             let color_code = if let Some(color) = color {
-                if let Some(hex) = color.strip_prefix('#') {
-                    if let Ok((r, g, b)) = parse_hex_color(hex) {
-                        format!("\x1b[38;2;{};{};{}m", r, g, b)
-                    } else {
-                        "\x1b[0m".to_string()
-                    }
-                } else {
-                    match color.as_str() {
-                        "black" => "\x1b[30m".to_string(),
-                        "red" => "\x1b[31m".to_string(),
-                        "green" => "\x1b[32m".to_string(),
-                        "yellow" => "\x1b[33m".to_string(),
-                        "blue" => "\x1b[34m".to_string(),
-                        "magenta" => "\x1b[35m".to_string(),
-                        "cyan" => "\x1b[36m".to_string(),
-                        "white" => "\x1b[37m".to_string(),
-                        "bright_black" => "\x1b[90m".to_string(),
-                        "bright_red" => "\x1b[91m".to_string(),
-                        "bright_green" => "\x1b[92m".to_string(),
-                        "bright_yellow" => "\x1b[93m".to_string(),
-                        "bright_blue" => "\x1b[94m".to_string(),
-                        "bright_magenta" => "\x1b[95m".to_string(),
-                        "bright_cyan" => "\x1b[96m".to_string(),
-                        "bright_white" => "\x1b[97m".to_string(),
-                        _ => "\x1b[0m".to_string(),
-                    }
-                }
-            } else {
+               get_color_code(&color)
+            } 
+            else {
                 "\x1b[0m".to_string()
             };
 
@@ -134,6 +122,7 @@ fn main() {
                         }
                     }
                 }
+
                 "colors" => {
                     let color_icon = &config.colors.color_icon;
                     let colors = [
@@ -204,6 +193,34 @@ fn bytes_to_gb(bytes: u64) -> f64 {
     (bytes as f64 / 1_073_741_824.0 * 10.0).round() / 10.0
 }
 
+fn get_color_code(color_name: &str) -> String {
+    if let Some(hex) = color_name.strip_prefix('#') {
+        if let Ok((r, g, b)) = parse_hex_color(hex) {
+            return format!("\x1b[38;2;{};{};{}m", r, g, b);
+        }
+    }
+
+    // Match for named colors
+    match color_name {
+        "bright_black" => "\x1b[90m".to_string(),
+        "red" => "\x1b[31m".to_string(),
+        "yellow" => "\x1b[33m".to_string(),
+        "green" => "\x1b[32m".to_string(),
+        "cyan" => "\x1b[36m".to_string(),
+        "blue" => "\x1b[34m".to_string(),
+        "magenta" => "\x1b[35m".to_string(),
+        "black" => "\x1b[30m".to_string(),
+        "bright_red" => "\x1b[91m".to_string(),
+        "bright_green" => "\x1b[92m".to_string(),
+        "bright_yellow" => "\x1b[93m".to_string(),
+        "bright_blue" => "\x1b[94m".to_string(),
+        "bright_magenta" => "\x1b[95m".to_string(),
+        "bright_cyan" => "\x1b[96m".to_string(),
+        "bright_white" => "\x1b[97m".to_string(),
+        "white" => "\x1b[37m".to_string(),
+        _ => "\x1b[0m".to_string(), 
+    }
+}
 
 fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, String, Option<String>)> {
     match field {
@@ -221,7 +238,6 @@ fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, Str
         "time_date" => Some((&config.time_date.text, config.time_date.icon.clone(), config.time_date.color.clone())),
         "battery" => Some((&config.battery.text, config.battery.icon.clone(), config.battery.color.clone())),
         "colors" => Some((&config.colors.text, config.colors.icon.clone(), config.colors.color.clone())),
-
         _ => None,
     }
 }
@@ -229,36 +245,9 @@ fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, Str
 
 
 
-fn get_config_path() -> PathBuf {
-    let config_dir = dirs::config_dir().expect("Unable to determine the config directory");
-    config_dir.join("statcat").join("config.toml")
-}
 
-fn load_config() -> Config {
-    let path = get_config_path();
 
-    if !path.exists() {
-        println!("Config file not found. Creating a default one at {:?}", path);
 
-        let default_config = Config {
-            ..Default::default() 
-        };
-
-        std::fs::create_dir_all(path.parent().unwrap()).expect("Unable to create config directory");
-        let mut file = File::create(&path).expect("Unable to create config file");
-        let toml_str = toml::to_string(&default_config).expect("Error serializing config");
-        use std::io::Write;
-        file.write_all(toml_str.as_bytes()).expect("Error writing default config");
-
-        return default_config;
-    }
-
-    let mut file = File::open(&path).expect("Unable to open config file");
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).expect("Unable to read config file");
-
-    toml::from_str(&contents).expect("Error parsing config file")
-}
 
 
 

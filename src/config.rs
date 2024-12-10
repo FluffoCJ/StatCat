@@ -51,6 +51,7 @@ pub struct Packages {
     pub color: Option<String>,
 }
 
+
 #[derive(Serialize, Deserialize, Default)]
 pub struct TimeDate {
     #[serde(default)]
@@ -87,6 +88,7 @@ pub struct Colors {
     pub color: Option<String>,
     #[serde(default)]
     pub color_icon: String,
+
 }
 
 
@@ -98,6 +100,13 @@ pub struct General {
     pub separator: String,
     #[serde(default)]
     pub padding: usize,
+    #[serde(default)]
+    pub figlet: bool,
+    #[serde(default)]
+    pub figlet_text: String,
+    #[serde(default)]
+    pub figlet_color: Option<String>,
+
 }
 
 #[derive(Serialize, Deserialize, Default)]
@@ -140,6 +149,7 @@ pub struct Config {
     pub battery: Battery,
     #[serde(default)]
     pub colors: Colors,
+
 
 }
 
