@@ -8,14 +8,14 @@ use nixinfo;
 use crate::config::*;
 use chrono::Local;
 use battery::Manager;
-use termion;
 
 
 mod fetch;
 mod config;
 
 fn main() {
-    let system = System::new_all();
+    let mut system = System::new();
+    system.refresh_memory();
     let config = load_config();
 
     let mut border_char = "";
@@ -29,11 +29,7 @@ fn main() {
     let mut side = "";
 
     if config.general.decoration == "nitch" {
-        border_char = "─";
-        corner_char = "╭";
-        end_corner_char = "╮";
-        bottom_left = "╰";
-        bottom_right = "╯"; 
+
         separator = "│".to_string();
         pad = 10;
         side = "│  ";

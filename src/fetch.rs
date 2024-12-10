@@ -36,6 +36,7 @@ pub fn get_shell() -> String {
         .expect("Failed to execute ps");
 
     String::from_utf8_lossy(&output.stdout).trim().to_string()
+    
 }
 
 pub fn detect_package_manager() -> &'static str {

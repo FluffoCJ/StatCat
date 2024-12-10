@@ -11,4 +11,8 @@ nixinfo = "0.3.3"
 serde = { version = "1.0.215", features = ["derive"] }
 sysinfo = "0.32.1"
 termion = "4.0.3"
+tokio = { version = "1.42.0", features = ["full"] }
 toml = "0.8.19"
+
+[profile.release]
+debug = true
