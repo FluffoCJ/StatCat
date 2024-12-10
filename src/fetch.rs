@@ -17,26 +17,27 @@ pub fn get_cpu() -> Option<String> {
 
 
 pub fn get_shell() -> String {
-    let output = Command::new("ps")
-        .arg("-p")
-        .arg(std::process::id().to_string())
-        .arg("-o")
-        .arg("ppid=")
-        .output()
-        .expect("Failed to execute ps");
-
-    let parent_pid = String::from_utf8_lossy(&output.stdout).trim().to_string();
-
-    let output = Command::new("ps")
-        .arg("-p")
-        .arg(parent_pid)
-        .arg("-o")
-        .arg("comm=")
-        .output()
-        .expect("Failed to execute ps");
-
-    String::from_utf8_lossy(&output.stdout).trim().to_string()
+    let pid = std::process::id().to_string();
+    let ppid_path = format!("/proc/{}/status", pid);
     
+    let status = fs::read_to_string(ppid_path)
+        .expect("Failed to read process status");
+
+    let ppid_line = status.lines()
+        .find(|line| line.starts_with("PPid"))
+        .expect("Failed to find PPid line");
+
+    let ppid: u32 = ppid_line.split_whitespace()
+        .nth(1)
+        .expect("Failed to extract PPid")
+        .parse()
+        .expect("Failed to parse PPid");
+
+    let cmd_path = format!("/proc/{}/comm", ppid);
+    fs::read_to_string(cmd_path)
+        .expect("Failed to read command")
+        .trim()
+        .to_string()
 }
 
 pub fn detect_package_manager() -> &'static str {

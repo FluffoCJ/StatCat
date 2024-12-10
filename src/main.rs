@@ -18,11 +18,7 @@ fn main() {
     system.refresh_memory();
     let config = load_config();
 
-    let mut border_char = "";
-    let mut corner_char = "";
-    let mut end_corner_char = "";
-    let mut bottom_left = "";
-    let mut bottom_right = "";
+
     let mut separator = config.general.separator.to_string();
     let r = "\x1b[0m";
     let mut pad = config.general.padding;
