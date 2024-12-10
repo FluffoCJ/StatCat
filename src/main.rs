@@ -24,7 +24,7 @@ fn main() {
     let mut pad = config.general.padding;
     let mut side = "";
 
-    if config.general.decoration == "nitch" {
+    if config.general.decoration == "border" {
 
         separator = "│".to_string();
         pad = 10;
@@ -178,7 +178,7 @@ fn main() {
             println!("Unknown field: {}", field);
         }
     }
-    if config.general.decoration == "nitch" {
+    if config.general.decoration == "border" {
         println!("╰────────────────╯");
     }
 }
