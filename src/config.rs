@@ -106,6 +106,8 @@ pub struct General {
     pub figlet_text: String,
     #[serde(default)]
     pub figlet_color: Option<String>,
+    #[serde(default)]
+    pub figlet_arg: String,
 
 }
 

@@ -67,6 +67,7 @@ pub fn get_figlet() -> Result<String, String> {
     let config = load_config();
     let output = Command::new("figlet")
         .arg({config.general.figlet_text})
+        .arg({config.general.figlet_arg})
         .output();
 
     match output {
