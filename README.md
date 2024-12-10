@@ -19,6 +19,7 @@ Until I create documentation, you can see available config options [here](https:
 
 # Features
 ##### Implemented
+- Figlet
 - Allow hex codes for colors
 - Custom separator in config
 - Colors module
@@ -46,6 +47,6 @@ Until I create documentation, you can see available config options [here](https:
 - images
 - Storage module
 - Media module
-- ASCII art
+- Custom ASCII art
 - local ip
 - Package updates available ???
