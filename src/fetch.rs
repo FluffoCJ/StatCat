@@ -42,18 +42,18 @@ pub fn get_shell() -> String {
 
 pub fn detect_package_manager() -> &'static str {
     let managers = [
-        ("pacman", "pacman"),
-        ("dpkg", "dpkg"),
-        ("rpm", "rpm"),
-        ("zypper", "zypper"),
+        ("pacman", "/usr/bin/pacman"),
+        ("dpkg", "/usr/bin/dpkg"),
+        ("rpm", "/usr/bin/rpm"),
+        ("zypper", "/usr/bin/zypper"),
     ];
 
-    for (name, cmd) in &managers {
-        if Command::new(cmd).output().is_ok() {
+    for (name, path) in &managers {
+        if fs::metadata(path).is_ok() {
             return *name;
         }
     }
-    
+
     "None"
 }
 
