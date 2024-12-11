@@ -154,6 +154,7 @@ fn main() {
                         "uptime" => fetch::get_uptime().unwrap_or_else(|| "Unknown uptime".to_string()),
                         "desktop" => nixinfo::environment().unwrap_or_default(),
                         "username" => fetch::get_user().to_string(),
+                        "kernel" => nixinfo::kernel().unwrap_or_default(),
                         _ => continue,
                     };
                     println!(
@@ -169,6 +170,28 @@ fn main() {
     }
     if config.general.decoration == "border" {
         println!("╰────────────────╯");
+    }
+}
+
+
+fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, String, Option<String>)> {
+    match field {
+        "os" => Some((&config.os.text, config.os.icon.clone(), config.os.color.clone())),
+        "cpu" => Some((&config.cpu.text, config.cpu.icon.clone(), config.cpu.color.clone())),
+        "memory" => Some((&config.memory.text, config.memory.icon.clone(), config.memory.color.clone())),
+        "hostname" => Some((&config.hostname.text, config.hostname.icon.clone(), config.hostname.color.clone())),
+        "packages" => Some((&config.packages.text, config.packages.icon.clone(), config.packages.color.clone())),
+        "shell" => Some((&config.shell.text, config.shell.icon.clone(), config.shell.color.clone())),
+        "gpu" => Some((&config.gpu.text, config.gpu.icon.clone(), config.gpu.color.clone())),
+        "terminal" => Some((&config.terminal.text, config.terminal.icon.clone(), config.terminal.color.clone())),
+        "uptime" => Some((&config.uptime.text, config.uptime.icon.clone(), config.uptime.color.clone())),
+        "desktop" => Some((&config.desktop.text, config.desktop.icon.clone(), config.desktop.color.clone())),
+        "username" => Some((&config.username.text, config.username.icon.clone(), config.username.color.clone())),
+        "time_date" => Some((&config.time_date.text, config.time_date.icon.clone(), config.time_date.color.clone())),
+        "battery" => Some((&config.battery.text, config.battery.icon.clone(), config.battery.color.clone())),
+        "colors" => Some((&config.colors.text, config.colors.icon.clone(), config.colors.color.clone())),
+        "kernel" => Some((&config.kernel.text, config.kernel.icon.clone(), config.kernel.color.clone())),
+        _ => None,
     }
 }
 
@@ -222,25 +245,7 @@ fn get_color_code(color_name: &str) -> String {
     }
 }
 
-fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, String, Option<String>)> {
-    match field {
-        "os" => Some((&config.os.text, config.os.icon.clone(), config.os.color.clone())),
-        "cpu" => Some((&config.cpu.text, config.cpu.icon.clone(), config.cpu.color.clone())),
-        "memory" => Some((&config.memory.text, config.memory.icon.clone(), config.memory.color.clone())),
-        "hostname" => Some((&config.hostname.text, config.hostname.icon.clone(), config.hostname.color.clone())),
-        "packages" => Some((&config.packages.text, config.packages.icon.clone(), config.packages.color.clone())),
-        "shell" => Some((&config.shell.text, config.shell.icon.clone(), config.shell.color.clone())),
-        "gpu" => Some((&config.gpu.text, config.gpu.icon.clone(), config.gpu.color.clone())),
-        "terminal" => Some((&config.terminal.text, config.terminal.icon.clone(), config.terminal.color.clone())),
-        "uptime" => Some((&config.uptime.text, config.uptime.icon.clone(), config.uptime.color.clone())),
-        "desktop" => Some((&config.desktop.text, config.desktop.icon.clone(), config.desktop.color.clone())),
-        "username" => Some((&config.username.text, config.username.icon.clone(), config.username.color.clone())),
-        "time_date" => Some((&config.time_date.text, config.time_date.icon.clone(), config.time_date.color.clone())),
-        "battery" => Some((&config.battery.text, config.battery.icon.clone(), config.battery.color.clone())),
-        "colors" => Some((&config.colors.text, config.colors.icon.clone(), config.colors.color.clone())),
-        _ => None,
-    }
-}
+
 
 
 

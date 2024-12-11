@@ -22,6 +22,7 @@ define_struct!(HostName);
 define_struct!(Cpu);
 define_struct!(Uptime);
 define_struct!(UserName);
+define_struct!(Kernel);
 
 // TODO: Add memory_free, memory_total, and memory_used modules
 
@@ -151,6 +152,8 @@ pub struct Config {
     pub battery: Battery,
     #[serde(default)]
     pub colors: Colors,
+    #[serde(default)]
+    pub kernel: Kernel,
 
 
 }
