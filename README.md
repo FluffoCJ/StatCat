@@ -23,7 +23,6 @@ Until I create documentation, you can see available config options [here](https:
 - Allow hex codes for colors
 - Custom separator in config
 - Colors module
-- Kernel
 - Distro Name
 - Hostname
 - Username
@@ -43,6 +42,7 @@ Until I create documentation, you can see available config options [here](https:
 - Decoration options
 
 ##### Planned
+- Kernel Module
 - Custom modules to display text
 - images
 - Storage module
