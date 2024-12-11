@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use std::fs::File;
 use std::io::Read;
 use crate::config::*;
+use regex::Regex;
 
 
 pub fn get_cpu() -> Option<String> {
@@ -46,8 +47,8 @@ pub fn get_shell() -> String {
 pub fn get_figlet() -> Result<String, String> {
     let config = load_config();
     let output = Command::new("figlet")
-        .arg({config.general.figlet_text})
-        .arg({config.general.figlet_arg})
+        .arg(config.general.figlet_text)
+        .arg(config.general.figlet_arg)
         .output();
 
     match output {
@@ -79,6 +80,20 @@ pub fn get_hostname() -> Option<String> {
         .map(|s| s.trim().to_string())
 }
 
+pub fn get_kernel() -> String {
+    let version = fs::read_to_string("/proc/version")
+        .unwrap_or_else(|_| "Unknown Kernel Version".to_string());
+
+    let re = Regex::new(r"Linux version (\S+)").unwrap();
+    
+    if let Some(caps) = re.captures(&version) {
+        caps[1].to_string()
+    } else {
+        "Unknown Kernel Version".to_string()
+    }
+}
+
+
 pub fn get_desktop() -> String {
     std::env::var("XDG_CURRENT_DESKTOP").unwrap_or_else(|_| "Unknown".to_string())
 }
@@ -91,6 +106,8 @@ fn get_config_path() -> PathBuf {
     let config_dir = dirs::config_dir().expect("Unable to determine the config directory");
     config_dir.join("statcat").join("config.toml")
 }
+
+
 
 pub fn load_config() -> Config {
     let path = get_config_path();

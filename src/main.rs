@@ -148,9 +148,9 @@ fn main() {
                         "gpu" => nixinfo::gpu().unwrap_or_default(),
                         "terminal" => nixinfo::terminal().unwrap_or_default(),
                         "uptime" => fetch::get_uptime().unwrap_or_else(|| "Unknown uptime".to_string()),
-                        "desktop" => nixinfo::environment().unwrap_or_default(),
+                        "desktop" => fetch::get_desktop(),
                         "username" => fetch::get_user().to_string(),
-                        "kernel" => nixinfo::kernel().unwrap_or_default(),
+                        "kernel" => fetch::get_kernel().to_string(),
                         _ => continue,
                     };
                     println!(
