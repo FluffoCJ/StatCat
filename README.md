@@ -49,10 +49,10 @@ Until I create documentation, you can see available config options [here](https:
 
 ##### Work in Progress
 - Memory Modules
-- Battery Modules (WIP, I don't have a laptop to test on)
 - Decoration options
 
 ##### Planned
+- Battery Modules
 - Kernel Module
 - Custom modules to display text
 - images
