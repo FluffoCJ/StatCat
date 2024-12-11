@@ -8,10 +8,21 @@ curl -sL https://raw.githubusercontent.com/fluffocj/statcat/main/install.sh | ba
 Until I create documentation, you can see available config options [here](https://github.com/FluffoCJ/StatCat/blob/main/src/config.rs)
 
 <details>
-  <summary>Image</summary>
-
+  <summary>Image 1</summary>
+  
   ![Example](/images/image.png)
+</details>
 
+<details>
+  <summary>Image 2</summary>
+  
+  ![Example](/images/image2.png)
+</details>
+
+<details>
+  <summary>Image 3</summary>
+  
+  ![Example](/images/image3.png)
 </details>
 
 
