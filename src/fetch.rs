@@ -1,13 +1,10 @@
 use std::process::Command;
-use std::io::BufRead;
 use std::fs::{read_to_string, self};
-use sysinfo::{System, RefreshKind, CpuRefreshKind};
 use std::path::PathBuf;
 use std::fs::File;
 use std::io::Read;
 use crate::config::*;
 
-use crate::main;
 
 pub fn get_cpu() -> Option<String> {
     if let Ok(cpuinfo) = read_to_string("/proc/cpuinfo") {
@@ -19,8 +16,6 @@ pub fn get_cpu() -> Option<String> {
     }
     None
 }
-
-
 
 pub fn get_shell() -> String {
     let pid = std::process::id().to_string();
@@ -46,22 +41,7 @@ pub fn get_shell() -> String {
         .to_string()
 }
 
-pub fn detect_package_manager() -> &'static str {
-    let managers = [
-        ("pacman", "/usr/bin/pacman"),
-        ("dpkg", "/usr/bin/dpkg"),
-        ("rpm", "/usr/bin/rpm"),
-        ("zypper", "/usr/bin/zypper"),
-    ];
 
-    for (name, path) in &managers {
-        if fs::metadata(path).is_ok() {
-            return *name;
-        }
-    }
-
-    "None"
-}
 
 pub fn get_figlet() -> Result<String, String> {
     let config = load_config();

@@ -1,9 +1,4 @@
-#![allow(unused)]
-use std::io::Read;
 use sysinfo::System;
-use toml;
-use std::path::PathBuf;
-use std::fs::File;
 use nixinfo;
 use crate::config::*;
 use chrono::Local;
@@ -11,6 +6,7 @@ use battery::Manager;
 
 mod fetch;
 mod config;
+mod packages;
 
 
 
@@ -67,7 +63,7 @@ fn main() {
                         let used_memory = gb_to_mb(used_memory);
                         let total_memory = gb_to_mb(total_memory);
                         println!(
-                        "{side}{color_code}{icon} {:<pad$}{r}│ MB/{total_memory}MB\x1b[0m",
+                        "{side}{color_code}{icon} {:<pad$}{r}│ {used_memory}MB/{total_memory}MB\x1b[0m",
                         text,
                         );
                     }
@@ -147,7 +143,7 @@ fn main() {
                     let value = match field.as_str() {
                         "hostname" => fetch::get_hostname().unwrap_or_else(|| "Unknown Host Name".to_string()),
                         "cpu" => fetch::get_cpu().unwrap_or_else(|| "Unknown CPU".to_string()),
-                        "packages" => nixinfo::packages(fetch::detect_package_manager()).unwrap_or_default(),
+                        "packages" => packages::get_package_count().to_string(),
                         "shell" => fetch::get_shell(),
                         "gpu" => nixinfo::gpu().unwrap_or_default(),
                         "terminal" => nixinfo::terminal().unwrap_or_default(),
@@ -244,16 +240,5 @@ fn get_color_code(color_name: &str) -> String {
         _ => "\x1b[0m".to_string(), 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
