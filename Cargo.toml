@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 battery = "0.7.8"
 chrono = "0.4.38"
+colored = "2.1.0"
 dirs = "5.0.1"
 nixinfo = "0.3.3"
 regex = "1.11.1"

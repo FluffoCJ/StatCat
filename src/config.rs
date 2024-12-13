@@ -109,6 +109,8 @@ pub struct General {
     pub figlet_color: Option<String>,
     #[serde(default)]
     pub figlet_arg: String,
+    #[serde(default)]
+    pub colors_order: Vec<String>,
 
 }
 

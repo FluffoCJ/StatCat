@@ -21,6 +21,8 @@ fn main() {
     let mut pad = config.general.padding;
     let mut side = "";
 
+    let colors_order = &config.general.colors_order;
+
 
     if config.general.figlet == true {
         let text = fetch::get_figlet().unwrap_or_default();
@@ -42,14 +44,17 @@ fn main() {
     
     
 
-    for field in &config.order.fields {
-        if let Some((text, icon, color)) = get_icon_text(&config, field) {
-            let color_code = if let Some(color) = color {
-               get_color_code(&color)
+    for (i, field) in config.order.fields.iter().enumerate() {
+        if let Some((text, icon)) = get_icon_text(&config, field) {
+
+
+            let color_code = if let Some(color_name) = colors_order.get(i) {
+                get_color_code(color_name)
             } 
             else {
-                "\x1b[0m".to_string()
+                "\x1b[0m".to_string()            
             };
+
 
 
 
@@ -170,23 +175,23 @@ fn main() {
 }
 
 
-fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, String, Option<String>)> {
+fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, String)> {
     match field {
-        "os" => Some((&config.os.text, config.os.icon.clone(), config.os.color.clone())),
-        "cpu" => Some((&config.cpu.text, config.cpu.icon.clone(), config.cpu.color.clone())),
-        "memory" => Some((&config.memory.text, config.memory.icon.clone(), config.memory.color.clone())),
-        "hostname" => Some((&config.hostname.text, config.hostname.icon.clone(), config.hostname.color.clone())),
-        "packages" => Some((&config.packages.text, config.packages.icon.clone(), config.packages.color.clone())),
-        "shell" => Some((&config.shell.text, config.shell.icon.clone(), config.shell.color.clone())),
-        "gpu" => Some((&config.gpu.text, config.gpu.icon.clone(), config.gpu.color.clone())),
-        "terminal" => Some((&config.terminal.text, config.terminal.icon.clone(), config.terminal.color.clone())),
-        "uptime" => Some((&config.uptime.text, config.uptime.icon.clone(), config.uptime.color.clone())),
-        "desktop" => Some((&config.desktop.text, config.desktop.icon.clone(), config.desktop.color.clone())),
-        "username" => Some((&config.username.text, config.username.icon.clone(), config.username.color.clone())),
-        "time_date" => Some((&config.time_date.text, config.time_date.icon.clone(), config.time_date.color.clone())),
-        "battery" => Some((&config.battery.text, config.battery.icon.clone(), config.battery.color.clone())),
-        "colors" => Some((&config.colors.text, config.colors.icon.clone(), config.colors.color.clone())),
-        "kernel" => Some((&config.kernel.text, config.kernel.icon.clone(), config.kernel.color.clone())),
+        "os" => Some((&config.os.text, config.os.icon.clone())),
+        "cpu" => Some((&config.cpu.text, config.cpu.icon.clone())),
+        "memory" => Some((&config.memory.text, config.memory.icon.clone())),
+        "hostname" => Some((&config.hostname.text, config.hostname.icon.clone())),
+        "packages" => Some((&config.packages.text, config.packages.icon.clone())),
+        "shell" => Some((&config.shell.text, config.shell.icon.clone())),
+        "gpu" => Some((&config.gpu.text, config.gpu.icon.clone())),
+        "terminal" => Some((&config.terminal.text, config.terminal.icon.clone())),
+        "uptime" => Some((&config.uptime.text, config.uptime.icon.clone())),
+        "desktop" => Some((&config.desktop.text, config.desktop.icon.clone())),
+        "username" => Some((&config.username.text, config.username.icon.clone())),
+        "time_date" => Some((&config.time_date.text, config.time_date.icon.clone())),
+        "battery" => Some((&config.battery.text, config.battery.icon.clone())),
+        "colors" => Some((&config.colors.text, config.colors.icon.clone())),
+        "kernel" => Some((&config.kernel.text, config.kernel.icon.clone())),
         _ => None,
     }
 }
@@ -240,5 +245,6 @@ fn get_color_code(color_name: &str) -> String {
         _ => "\x1b[0m".to_string(), 
     }
 }
+
 
 
