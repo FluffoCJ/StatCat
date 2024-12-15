@@ -1,20 +1,17 @@
-use sysinfo::System;
-use nixinfo;
 use crate::config::*;
-use chrono::Local;
 use battery::Manager;
+use chrono::Local;
+use nixinfo;
+use sysinfo::System;
 
-mod fetch;
 mod config;
+mod fetch;
 mod packages;
-
-
 
 fn main() {
     let mut system = System::new();
     system.refresh_memory();
     let config = fetch::load_config();
-
 
     let mut separator = config.general.separator.to_string();
     let r = "\x1b[0m";
@@ -23,41 +20,31 @@ fn main() {
 
     let colors_order = &config.general.colors_order;
 
-
     if config.general.figlet == true {
         let text = fetch::get_figlet().unwrap_or_default();
-        let text = text.lines().take(text.lines().count() - 1).collect::<Vec<_>>().join("\n");
-        let color = config.general.figlet_color.clone().unwrap_or_default(); 
+        let text = text
+            .lines()
+            .take(text.lines().count() - 1)
+            .collect::<Vec<_>>()
+            .join("\n");
+        let color = config.general.figlet_color.clone().unwrap_or_default();
         let color_code = get_color_code(&color);
         println!("{color_code}{text}\x1b[0m");
     }
 
-
     if config.general.decoration == "border" {
-
         separator = "│".to_string();
-        pad = 10;
         side = "│  ";
-        println!("╭────────────────╮");
+        println!("╭{}╮", "─".repeat(pad + 6));
     }
-
-    
-    
 
     for (i, field) in config.order.fields.iter().enumerate() {
         if let Some((text, icon)) = get_icon_text(&config, field) {
-
-
             let color_code = if let Some(color_name) = colors_order.get(i) {
                 get_color_code(color_name)
-            } 
-            else {
-                "\x1b[0m".to_string()            
+            } else {
+                "\x1b[0m".to_string()
             };
-
-
-
-
 
             match field.as_str() {
                 "memory" => {
@@ -71,15 +58,13 @@ fn main() {
                         "{side}{color_code}{icon} {:<pad$}{r}│ {used_memory}MB/{total_memory}MB\x1b[0m",
                         text,
                         );
-                    }
-                    else if config.memory.display_percent {
+                    } else if config.memory.display_percent {
                         let used_memory = (used_memory / total_memory) * 100.0;
                         println!(
-                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {used_memory}%\x1b[0m",
-                        text,
+                            "{side}{color_code}{icon} {:<pad$}{r}{separator} {used_memory}%\x1b[0m",
+                            text,
                         );
-                    }
-                    else {
+                    } else {
                         println!(
                         "{side}{color_code}{icon} {:<pad$}{r}{separator} {used_memory}GB/{total_memory}GB\x1b[0m",
                         text,
@@ -88,15 +73,17 @@ fn main() {
                 }
                 "time_date" => {
                     let now = Local::now();
-                    let formatted = now.format(config.time_date.format.as_str()).to_string(); 
+                    let formatted = now.format(config.time_date.format.as_str()).to_string();
                     println!(
-                    "{side}{color_code}{icon} {:<pad$}{r}{separator} {formatted}",
-                    text, 
+                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {formatted}",
+                        text,
                     );
- 
                 }
                 "os" => {
-                    let distro = nixinfo::distro().unwrap_or_default().trim_matches('"').to_string();
+                    let distro = nixinfo::distro()
+                        .unwrap_or_default()
+                        .trim_matches('"')
+                        .to_string();
                     println!(
                         "{side}{color_code}{icon} {:<pad$}{r}{separator} {distro}\x1b[0m",
                         text,
@@ -109,17 +96,18 @@ fn main() {
                         if config.battery.percentage {
                             // Percentage
                             println!(
-                            "{side}{color_code}{icon} {:<pad$}{r}{separator} {:.2}", battery.state_of_charge().value * 100.0,
-                            text,
+                                "{side}{color_code}{icon} {:<pad$}{r}{separator} {:.2}",
+                                battery.state_of_charge().value * 100.0,
+                                text,
                             );
-
                         }
                         if config.battery.charging_state {
                             // Charging state
                             println!(
-                            "{side}{color_code}{icon} {:<pad$}{r}{separator} {:?}", battery.state(),
-                            text,
-                        );
+                                "{side}{color_code}{icon} {:<pad$}{r}{separator} {:?}",
+                                battery.state(),
+                                text,
+                            );
                         }
                     }
                 }
@@ -136,9 +124,9 @@ fn main() {
                         "\x1b[35m", // Magenta
                         "\x1b[30m", // Black
                     ];
-                
+
                     print!("{side}{color_code}{icon} {:<pad$}{r}{separator}", text);
-                
+
                     for element in colors {
                         print!("{element} {color_icon}\x1b[0m ");
                     }
@@ -146,34 +134,36 @@ fn main() {
                 }
                 _ => {
                     let value = match field.as_str() {
-                        "hostname" => fetch::get_hostname().unwrap_or_else(|| "Unknown Host Name".to_string()),
+                        "hostname" => {
+                            fetch::get_hostname().unwrap_or_else(|| "Unknown Host Name".to_string())
+                        }
                         "cpu" => fetch::get_cpu().unwrap_or_else(|| "Unknown CPU".to_string()),
                         "packages" => packages::get_package_count().to_string(),
                         "shell" => fetch::get_shell(),
                         "gpu" => nixinfo::gpu().unwrap_or_default(),
                         "terminal" => nixinfo::terminal().unwrap_or_default(),
-                        "uptime" => fetch::get_uptime().unwrap_or_else(|| "Unknown uptime".to_string()),
+                        "uptime" => {
+                            fetch::get_uptime().unwrap_or_else(|| "Unknown uptime".to_string())
+                        }
                         "desktop" => fetch::get_desktop(),
                         "username" => fetch::get_user().to_string(),
                         "kernel" => fetch::get_kernel().to_string(),
                         _ => continue,
                     };
                     println!(
-                    "{side}{color_code}{icon} {:<pad$}{r}{separator} {value}\x1b[0m",
-                    text,
+                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {value}\x1b[0m",
+                        text,
                     );
                 }
             }
-        } 
-        else {
+        } else {
             println!("Unknown field: {}", field);
         }
     }
     if config.general.decoration == "border" {
-        println!("╰────────────────╯");
+        println!("╰{}╯", "─".repeat(pad + 6));
     }
 }
-
 
 fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, String)> {
     match field {
@@ -196,7 +186,6 @@ fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, Str
     }
 }
 
-
 fn parse_hex_color(hex: &str) -> Result<(u8, u8, u8), &'static str> {
     if hex.len() == 6 {
         let r = u8::from_str_radix(&hex[0..2], 16).map_err(|_| "Invalid hex format")?;
@@ -207,7 +196,6 @@ fn parse_hex_color(hex: &str) -> Result<(u8, u8, u8), &'static str> {
         Err("Hex color must be 6 characters")
     }
 }
-
 
 fn gb_to_mb(gb: f64) -> f64 {
     (gb as f64 * 1024.0).round()
@@ -242,9 +230,6 @@ fn get_color_code(color_name: &str) -> String {
         "bright_cyan" => "\x1b[96m".to_string(),
         "bright_white" => "\x1b[97m".to_string(),
         "white" => "\x1b[37m".to_string(),
-        _ => "\x1b[0m".to_string(), 
+        _ => "\x1b[0m".to_string(),
     }
 }
-
-
-
