@@ -15,7 +15,7 @@ fn main() {
 
     let mut separator = config.general.separator.to_string();
     let r = "\x1b[0m";
-    let mut pad = config.general.padding;
+    let pad = config.general.padding;
     let mut side = "";
 
     let colors_order = &config.general.colors_order;
@@ -111,6 +111,41 @@ fn main() {
                         }
                     }
                 }
+                "custom1" => {
+                    let custom_value = &config.custom1.value;
+                    println!(
+                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {custom_value}",
+                        text,
+                    );
+                }
+                "custom2" => {
+                    let custom_value = &config.custom2.value;
+                    println!(
+                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {custom_value}",
+                        text,
+                    );
+                }
+                "custom3" => {
+                    let custom_value = &config.custom3.value;
+                    println!(
+                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {custom_value}",
+                        text,
+                    );
+                }
+                "custom4" => {
+                    let custom_value = &config.custom4.value;
+                    println!(
+                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {custom_value}",
+                        text,
+                    );
+                }
+                "custom5" => {
+                    let custom_value = &config.custom5.value;
+                    println!(
+                        "{side}{color_code}{icon} {:<pad$}{r}{separator} {custom_value}",
+                        text,
+                    );
+                }
 
                 "colors" => {
                     let color_icon = &config.colors.color_icon;
@@ -140,8 +175,8 @@ fn main() {
                         "cpu" => fetch::get_cpu().unwrap_or_else(|| "Unknown CPU".to_string()),
                         "packages" => packages::get_package_count().to_string(),
                         "shell" => fetch::get_shell(),
-                        "gpu" => nixinfo::gpu().unwrap_or_default(),
-                        "terminal" => nixinfo::terminal().unwrap_or_default(),
+                        "gpu" => nixinfo::gpu().unwrap_or_default(), //TODO: Rewrite
+                        "terminal" => nixinfo::terminal().unwrap_or_default(), //TODO: Rewrite
                         "uptime" => {
                             fetch::get_uptime().unwrap_or_else(|| "Unknown uptime".to_string())
                         }
@@ -182,6 +217,11 @@ fn get_icon_text<'a>(config: &'a Config, field: &'a str) -> Option<(&'a str, Str
         "battery" => Some((&config.battery.text, config.battery.icon.clone())),
         "colors" => Some((&config.colors.text, config.colors.icon.clone())),
         "kernel" => Some((&config.kernel.text, config.kernel.icon.clone())),
+        "custom1" => Some((&config.custom1.text, config.custom1.icon.clone())),
+        "custom2" => Some((&config.custom2.text, config.custom2.icon.clone())),
+        "custom3" => Some((&config.custom3.text, config.custom3.icon.clone())),
+        "custom4" => Some((&config.custom4.text, config.custom4.icon.clone())),
+        "custom5" => Some((&config.custom5.text, config.custom5.icon.clone())),
         _ => None,
     }
 }

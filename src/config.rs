@@ -13,6 +13,23 @@ macro_rules! define_struct {
         }
     };
 }
+
+macro_rules! define_custom {
+    ($name:ident) => {
+        #[derive(Serialize, Deserialize, Default)]
+        pub struct $name {
+            #[serde(default)]
+            pub icon: String,
+            #[serde(default)]
+            pub text: String,
+            #[serde(default)]
+            pub color: Option<String>,
+            #[serde(default)]
+            pub value: String,
+        }
+    };
+}
+
 define_struct!(OS);
 define_struct!(Gpu);
 define_struct!(Terminal);
@@ -23,6 +40,12 @@ define_struct!(Cpu);
 define_struct!(Uptime);
 define_struct!(UserName);
 define_struct!(Kernel);
+
+define_custom!(Custom1);
+define_custom!(Custom2);
+define_custom!(Custom3);
+define_custom!(Custom4);
+define_custom!(Custom5);
 
 // TODO: Add memory_free, memory_total, and memory_used modules
 
@@ -40,7 +63,6 @@ pub struct Memory {
     pub color: Option<String>,
 }
 
-
 // TODO: Add display_package_manager bool
 #[derive(Serialize, Deserialize, Default)]
 pub struct Packages {
@@ -51,7 +73,6 @@ pub struct Packages {
     #[serde(default)]
     pub color: Option<String>,
 }
-
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct TimeDate {
@@ -89,9 +110,7 @@ pub struct Colors {
     pub color: Option<String>,
     #[serde(default)]
     pub color_icon: String,
-
 }
-
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct General {
@@ -111,14 +130,12 @@ pub struct General {
     pub figlet_arg: String,
     #[serde(default)]
     pub colors_order: Vec<String>,
-
 }
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct Order {
     pub fields: Vec<String>,
 }
-
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct Config {
@@ -156,8 +173,14 @@ pub struct Config {
     pub colors: Colors,
     #[serde(default)]
     pub kernel: Kernel,
-
-
+    #[serde(default)]
+    pub custom1: Custom1,
+    #[serde(default)]
+    pub custom2: Custom2,
+    #[serde(default)]
+    pub custom3: Custom3,
+    #[serde(default)]
+    pub custom4: Custom4,
+    #[serde(default)]
+    pub custom5: Custom5,
 }
-
-
