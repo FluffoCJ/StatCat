@@ -3,69 +3,80 @@
 [username]
 text = "Username"
 icon = "  "
-color = "red"
 [hostname]
 text = "Hostname"
 icon = "󰇅  "
-color = "green"
 [os]
 text = "OS"
 icon = "  "
-color = "yellow"
 [packages]
 text = "Packages"
 icon = "󰏖  "
-color = "blue"
 [terminal]
 text = "Terminal"
 icon = "  "
-color = "magenta"
 [shell]
 text = "Shell"
 icon = "  "
-color = "cyan"
 [desktop]
 text = "Desktop"
 icon = "󰍹  "
-color = "blue"
-[gpu]
+[gpu] # Significantly decreases speed, I need to rewrite
 text = "GPU"
 icon = "  "
-color = "red"
 [cpu]
 text = "CPU"
 icon = "  "
-color = "bright_green"
 [memory]
 text = "Memory"
 icon = "  "
-color = "bright_yellow"
 display_mb = false
 display_percent = false
 [uptime]
 text = "Uptime"
 icon = "  "
-color = "bright_blue"
-# WIP. MAY NOT WORK.
-#[battery]
-#text = "Battery"
-#color = "magenta"
-#percentage = true
-#charging_state = true
 [colors]
 text = "Colors"
-color = "magenta"
 icon = "  "
 color_icon = "󰣏"
 [time_date]
 text = "Time/Date"
-format = "%h %m"
-color = "cyan"
+format = "%m/%d/%Y - %H:%M"
 icon = "󰺗  "
+[kernel]
+text = "Kernel"
+icon = "   "
 [general]
-decoration = "nitch"
+decoration = "border"
 separator = ""
+# If you have border decoration and its "messy",
+# you likely need to increase the padding number.
+padding = 10
+figlet = true
+figlet_text = "StatCat!"
+#figlet_arg = "-smushmode"
+figlet_color = "magenta"
+colors_order = [
+"red", "yellow", "green",
+"cyan", "blue", "magenta",
+"red", "yellow", "green",
+"cyan", "blue", "magenta"
+]
+
+# You can have 5 custom modules,
+# custom1, custom2, up to 5
+# To print it just add "custom1" to fields
+# Replace 1 with whichever you want to print
+[custom1]
+text = ""
+icon = ""
+value = ""
+
+
 [order]
-fields = ["username", "hostname", "os", "packages", "terminal",
-"shell", "desktop", "gpu", "cpu", "memory", "uptime","colors"]
+fields = [
+"username", "hostname", "os", "packages","desktop", "terminal",
+"shell", "cpu", "memory", "uptime","time_date", "colors", 
+]
+
 
