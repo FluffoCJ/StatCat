@@ -23,8 +23,6 @@ macro_rules! define_custom {
             #[serde(default)]
             pub text: String,
             #[serde(default)]
-            pub color: Option<String>,
-            #[serde(default)]
             pub value: String,
         }
     };

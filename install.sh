@@ -5,7 +5,7 @@ set -e
 BINARY_NAME="statcat"
 INSTALL_DIR="/usr/local/bin"
 CONFIG_DIR="$HOME/.config/$BINARY_NAME"
-RELEASE_URL="https://github.com/FluffoCJ/StatCat/releases/download/V1.1.0-beta/statcat-v1.1.0-beta.tar.gz"
+RELEASE_URL="https://github.com/FluffoCJ/StatCat/releases/download/V2.0.0-beta/statcat-v2.0.0-beta.tar.gz"
 
 echo "Installing $BINARY_NAME..."
 
@@ -29,4 +29,3 @@ rm -rf /tmp/$BINARY_NAME /tmp/$BINARY_NAME.tar.gz
 
 echo "$BINARY_NAME installed successfully!"
 echo "Configuration file copied to $CONFIG_DIR/config.toml."
-
