@@ -13,19 +13,33 @@ fn main() {
     let mut system = System::new();
     system.refresh_memory();
 
-    let distro = nixinfo::distro()
+    let os = nixinfo::distro()
         .unwrap_or_default()
         .trim_matches('"')
         .to_string();
     let packages = packages::get_package_count().to_string();
     let hostname = fetch::get_hostname().unwrap_or_default();
     let cpu = fetch::get_cpu().unwrap_or_default();
+    let shell = fetch::get_shell();
+    let gpu = nixinfo::gpu().unwrap_or_default();
+    let terminal = nixinfo::terminal().unwrap_or_default();
+    let uptime = fetch::get_uptime().unwrap_or_default();
+    let desktop = fetch::get_desktop();
+    let username = fetch::get_user();
+    let kernel = fetch::get_kernel();
 
     let variables: HashMap<&str, String> = HashMap::from([
         ("hostname", hostname),
         ("cpu", cpu),
-        ("distro", distro),
+        ("os", os),
         ("packages", packages),
+        ("shell", shell),
+        ("gpu", gpu),
+        ("terminal", terminal),
+        ("uptime", uptime),
+        ("desktop", desktop),
+        ("username", username),
+        ("kernel", kernel),
     ]);
 
     if let Err(e) = print_config(&variables) {

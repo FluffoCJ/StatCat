@@ -1,8 +1,18 @@
 [config]
 output = [
-    "{blue}System Info:{reset}",
-    "{green}Hostname -> {hostname}",
+  "username {username}",
+  "hostname {hostname}",
+  "distro {os}",
+  "packages {packages}",
+  "desktop {desktop}",
+  "terminal {terminal}",
+  "shell {shell}",
+  "gpu {gpu}",
+  "cpu {cpu}",
+  "uptime {uptime}",
 ]
+
+[general]
 
 [colors]
 blue = "\u001b[34m"
