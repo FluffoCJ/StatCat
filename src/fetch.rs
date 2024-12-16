@@ -42,24 +42,24 @@ pub fn get_shell() -> String {
         .to_string()
 }
 
-pub fn get_figlet() -> Result<String, String> {
-    let config = load_config();
-    let output = Command::new("figlet")
-        .arg(config.general.figlet_text)
-        .arg(config.general.figlet_arg)
-        .output();
-
-    match output {
-        Ok(output) => {
-            if !output.stdout.is_empty() {
-                Ok(String::from_utf8_lossy(&output.stdout).to_string())
-            } else {
-                Err("No output from the command".to_string())
-            }
-        }
-        Err(e) => Err(format!("Error running command: {}", e)),
-    }
-}
+//pub fn get_figlet() -> Result<String, String> {
+//    let config = load_config();
+//    let output = Command::new("figlet")
+//        .arg(config.general.figlet_text)
+//        .arg(config.general.figlet_arg)
+//        .output();
+//
+//    match output {
+//        Ok(output) => {
+//            if !output.stdout.is_empty() {
+//                Ok(String::from_utf8_lossy(&output.stdout).to_string())
+//            } else {
+//                Err("No output from the command".to_string())
+//            }
+//        }
+//        Err(e) => Err(format!("Error running command: {}", e)),
+//    }
+//}
 
 pub fn get_uptime() -> Option<String> {
     if let Ok(content) = fs::read_to_string("/proc/uptime") {

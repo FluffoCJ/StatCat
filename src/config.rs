@@ -1,184 +1,19 @@
 use serde::{Deserialize, Serialize};
-
-macro_rules! define_struct {
-    ($name:ident) => {
-        #[derive(Serialize, Deserialize, Default)]
-        pub struct $name {
-            #[serde(default)]
-            pub icon: String,
-            #[serde(default)]
-            pub text: String,
-            #[serde(default)]
-            pub color: Option<String>,
-        }
-    };
-}
-
-macro_rules! define_custom {
-    ($name:ident) => {
-        #[derive(Serialize, Deserialize, Default)]
-        pub struct $name {
-            #[serde(default)]
-            pub icon: String,
-            #[serde(default)]
-            pub text: String,
-            #[serde(default)]
-            pub value: String,
-        }
-    };
-}
-
-define_struct!(OS);
-define_struct!(Gpu);
-define_struct!(Terminal);
-define_struct!(Shell);
-define_struct!(Desktop);
-define_struct!(HostName);
-define_struct!(Cpu);
-define_struct!(Uptime);
-define_struct!(UserName);
-define_struct!(Kernel);
-
-define_custom!(Custom1);
-define_custom!(Custom2);
-define_custom!(Custom3);
-define_custom!(Custom4);
-define_custom!(Custom5);
-
-// TODO: Add memory_free, memory_total, and memory_used modules
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct Memory {
-    #[serde(default)]
-    pub icon: String,
-    #[serde(default)]
-    pub text: String,
-    #[serde(default)]
-    pub display_percent: bool,
-    #[serde(default)]
-    pub display_mb: bool,
-    #[serde(default)]
-    pub color: Option<String>,
-}
-
-// TODO: Add display_package_manager bool
-#[derive(Serialize, Deserialize, Default)]
-pub struct Packages {
-    #[serde(default)]
-    pub icon: String,
-    #[serde(default)]
-    pub text: String,
-    #[serde(default)]
-    pub color: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct TimeDate {
-    #[serde(default)]
-    pub icon: String,
-    #[serde(default)]
-    pub text: String,
-    #[serde(default)]
-    pub color: Option<String>,
-    #[serde(default)]
-    pub format: String,
-}
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct Battery {
-    #[serde(default)]
-    pub icon: String,
-    #[serde(default)]
-    pub text: String,
-    #[serde(default)]
-    pub color: Option<String>,
-    #[serde(default)]
-    pub charging_state: bool,
-    #[serde(default)]
-    pub percentage: bool,
-}
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct Colors {
-    #[serde(default)]
-    pub icon: String,
-    #[serde(default)]
-    pub text: String,
-    #[serde(default)]
-    pub color: Option<String>,
-    #[serde(default)]
-    pub color_icon: String,
-}
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct General {
-    #[serde(default)]
-    pub decoration: String,
-    #[serde(default)]
-    pub separator: String,
-    #[serde(default)]
-    pub padding: usize,
-    #[serde(default)]
-    pub figlet: bool,
-    #[serde(default)]
-    pub figlet_text: String,
-    #[serde(default)]
-    pub figlet_color: Option<String>,
-    #[serde(default)]
-    pub figlet_arg: String,
-    #[serde(default)]
-    pub colors_order: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct Order {
-    pub fields: Vec<String>,
-}
+use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct Config {
     #[serde(default)]
-    pub general: General,
+    pub config: OutputConfig,
     #[serde(default)]
-    pub hostname: HostName,
-    #[serde(default)]
-    pub cpu: Cpu,
-    #[serde(default)]
-    pub gpu: Gpu,
-    #[serde(default)]
-    pub terminal: Terminal,
-    #[serde(default)]
-    pub uptime: Uptime,
-    #[serde(default)]
-    pub os: OS,
-    #[serde(default)]
-    pub shell: Shell,
-    #[serde(default)]
-    pub packages: Packages,
-    #[serde(default)]
-    pub memory: Memory,
-    #[serde(default)]
-    pub desktop: Desktop,
-    #[serde(default)]
-    pub order: Order,
-    #[serde(default)]
-    pub username: UserName,
-    #[serde(default)]
-    pub time_date: TimeDate,
-    #[serde(default)]
-    pub battery: Battery,
-    #[serde(default)]
-    pub colors: Colors,
-    #[serde(default)]
-    pub kernel: Kernel,
-    #[serde(default)]
-    pub custom1: Custom1,
-    #[serde(default)]
-    pub custom2: Custom2,
-    #[serde(default)]
-    pub custom3: Custom3,
-    #[serde(default)]
-    pub custom4: Custom4,
-    #[serde(default)]
-    pub custom5: Custom5,
+    pub colors: HashMap<String, String>,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct OutputConfig {
+    pub output: Vec<String>,
+}
+
+pub fn load_config(path: &str) -> Result<String, std::io::Error> {
+    std::fs::read_to_string(path)
 }
