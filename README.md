@@ -26,10 +26,9 @@ Until I create documentation, you can see available config options [here](https:
 </details>
 
 
-
-
+<details>
+  <summary>Current release</summary>
 # Features
-##### Implemented
 - Figlet
 - Allow hex codes for colors
 - Custom separator in config
@@ -47,17 +46,28 @@ Until I create documentation, you can see available config options [here](https:
 - Color
 - Date time module
 
-##### Work in Progress
-- Memory Modules
-- Decoration options
+</details>
 
-##### Planned
-- Battery Modules
-- Kernel Module
-- Custom modules to display text
-- images
-- Storage module
-- Media module
-- Custom ASCII art
-- local ip
-- Package updates available ???
+
+<details>
+  <summary>Rewrite</summary>
+
+# Implemented
+- Modules: OS, Hostname, CPU, Packages, Kernel,
+Terminal, Uptime, Username, Shell, Desktop
+- Config rework: Completely custom config, users decide exactly how it is printed.
+- Figlet
+
+# To do
+- Images
+- Custom ASCII
+- Cache figlet
+- Modules: Memory, Local IP, Media, Battery, Storage, GPU,
+- Add bars to memory usage
+
+# Other info
+- Bordered decoration will no longer be an option, instead users will have to insert the border icons manually in the config. (This may change)
+
+
+</details>
+
