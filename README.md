@@ -26,8 +26,6 @@ Until I create documentation, you can see available config options [here](https:
 </details>
 
 
-<details>
-  <summary>Current release</summary>
 
 # Features
 - Figlet
@@ -47,7 +45,6 @@ Until I create documentation, you can see available config options [here](https:
 - Color
 - Date time module
 
-</details>
 
 
 <details>
