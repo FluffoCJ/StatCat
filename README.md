@@ -28,6 +28,7 @@ Until I create documentation, you can see available config options [here](https:
 
 <details>
   <summary>Current release</summary>
+
 # Features
 - Figlet
 - Allow hex codes for colors
@@ -50,7 +51,7 @@ Until I create documentation, you can see available config options [here](https:
 
 
 <details>
-  <summary>Rewrite</summary>
+  <summary>Rewrite Roadmap</summary>
 
 # Implemented
 - Modules: OS, Hostname, CPU, Packages, Kernel,
