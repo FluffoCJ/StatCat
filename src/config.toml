@@ -7,7 +7,6 @@ output = [
   "desktop {desktop}",
   "terminal {terminal}",
   "shell {shell}",
-  "gpu {gpu}",
   "cpu {cpu}",
   "uptime {uptime}",
 ]

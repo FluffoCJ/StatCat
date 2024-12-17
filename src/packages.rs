@@ -1,6 +1,5 @@
 use std::fs;
 
-
 pub fn detect_package_manager() -> &'static str {
     let managers = [
         ("pacman", "/usr/bin/pacman"),
@@ -36,14 +35,18 @@ fn count_pacman_packages() -> usize {
 fn count_dpkg_packages() -> usize {
     let path = "/var/lib/dpkg/status";
     let content = fs::read_to_string(path).unwrap_or_default();
-    content.lines().filter(|line| line.starts_with("Package:")).count()
+    content
+        .lines()
+        .filter(|line| line.starts_with("Package:"))
+        .count()
 }
 
 fn count_rpm_packages() -> usize {
     let path = "/var/lib/rpm/Packages";
     if fs::metadata(path).is_ok() {
-        1 
-    } else {
+        1
+    }
+    else {
         0
     }
 }

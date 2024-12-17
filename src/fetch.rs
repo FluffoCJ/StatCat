@@ -4,6 +4,7 @@ use std::fs::File;
 use std::fs::{self, read_to_string};
 use std::io::Read;
 use std::path::PathBuf;
+use std::io::{self, BufRead};
 use std::process::Command;
 
 pub fn get_cpu() -> Option<String> {
@@ -86,7 +87,8 @@ pub fn get_kernel() -> String {
 
     if let Some(caps) = re.captures(&version) {
         caps[1].to_string()
-    } else {
+    }
+    else {
         "Unknown Kernel Version".to_string()
     }
 }
@@ -97,6 +99,24 @@ pub fn get_desktop() -> String {
 
 pub fn get_user() -> String {
     std::env::var("USER").unwrap_or_else(|_| "Unknown".to_string())
+}
+
+
+pub fn get_distro() -> Option<String> {
+    // Try to open the /etc/os-release file
+    let file = fs::File::open("/etc/os-release").ok()?;
+    let reader = io::BufReader::new(file);
+
+    // Look for the line that starts with NAME= and return the value
+    for line in reader.lines() {
+        if let Ok(line) = line {
+            if line.starts_with("NAME=") {
+                return Some(line.split('=').nth(1)?.trim_matches('"').to_string());
+            }
+        }
+    }
+
+    None
 }
 
 fn get_config_path() -> PathBuf {

@@ -7,6 +7,7 @@ edition = "2021"
 battery = "0.7.8"
 chrono = "0.4.38"
 dirs = "5.0.1"
+home = "0.5.11"
 nixinfo = "0.3.3"
 regex = "1.11.1"
 serde = { version = "1.0.215", features = ["derive"] }

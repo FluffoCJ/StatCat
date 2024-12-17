@@ -2,8 +2,11 @@ use crate::config::*;
 use battery::Manager;
 use chrono::Local;
 use nixinfo;
-use std::collections::HashMap;
+use std::fs;
+use std::io;
+use home::home_dir;
 use sysinfo::System;
+use std::collections::HashMap;
 
 mod config;
 mod fetch;
@@ -13,61 +16,72 @@ fn main() {
     let mut system = System::new();
     system.refresh_memory();
 
-    let os = nixinfo::distro()
-        .unwrap_or_default()
-        .trim_matches('"')
-        .to_string();
-    let packages = packages::get_package_count().to_string();
-    let hostname = fetch::get_hostname().unwrap_or_default();
-    let cpu = fetch::get_cpu().unwrap_or_default();
-    let shell = fetch::get_shell();
-    let gpu = nixinfo::gpu().unwrap_or_default();
-    let terminal = nixinfo::terminal().unwrap_or_default();
-    let uptime = fetch::get_uptime().unwrap_or_default();
-    let desktop = fetch::get_desktop();
-    let username = fetch::get_user();
-    let kernel = fetch::get_kernel();
-
-    let variables: HashMap<&str, String> = HashMap::from([
-        ("hostname", hostname),
-        ("cpu", cpu),
-        ("os", os),
-        ("packages", packages),
-        ("shell", shell),
-        ("gpu", gpu),
-        ("terminal", terminal),
-        ("uptime", uptime),
-        ("desktop", desktop),
-        ("username", username),
-        ("kernel", kernel),
-    ]);
-
-    if let Err(e) = print_config(&variables) {
-        eprintln!("Error: {}", e);
-    }
+    print_config();
 }
 
-fn print_config(variables: &HashMap<&str, String>) -> Result<(), Box<dyn std::error::Error>> {
-    let config_path = "config.toml";
-    let config_content = load_config(config_path)?;
-    let config: Config = toml::from_str(&config_content)?;
+fn print_config() -> Result<(), Box<dyn std::error::Error>> {
+    let config = load_config()?;
 
     for line in &config.config.output {
-        let mut rendered_line = line.clone();
+        let mut line = line.clone();
 
-        // Replace variables
-        for (key, value) in variables {
-            let placeholder = format!("{{{}}}", key);
-            rendered_line = rendered_line.replace(&placeholder, value);
-        }
-
-        // Replace colors
         for (key, value) in &config.colors {
             let placeholder = format!("{{{}}}", key);
-            rendered_line = rendered_line.replace(&placeholder, value);
-        }
 
-        println!("{}", rendered_line);
+            if value.starts_with("#") {
+                let ansi_color = hex_to_ansi(value);
+                line = line.replace(&placeholder, &ansi_color);
+            } else {
+                line = line.replace(&placeholder, value);
+            }
+        }
+        let mut replacements: HashMap<&str, fn() -> String> = HashMap::new();
+        replacements.insert("{os}", || fetch::get_distro().unwrap_or_default());
+        replacements.insert("{hostname}", || fetch::get_hostname().unwrap_or_default());
+        replacements.insert("{cpu}", || fetch::get_cpu().unwrap_or_default());
+        replacements.insert("{packages}", || packages::get_package_count().to_string());
+        replacements.insert("{kernel}", || fetch::get_kernel());
+        replacements.insert("{terminal}", || nixinfo::terminal().unwrap_or_default());
+        replacements.insert("{uptime}", || fetch::get_uptime().unwrap_or_default());
+        replacements.insert("{username}", || fetch::get_user());
+        replacements.insert("{shell}", || fetch::get_shell());
+        replacements.insert("{desktop}", || fetch::get_desktop());
+
+        for (placeholder, fetch_func) in &replacements {
+            if line.contains(placeholder) {
+                line = line.replace(placeholder, &fetch_func());
+            }
+        }
+        println!("{}", line);
     }
     Ok(())
 }
+
+pub fn load_config() -> Result<Config, io::Error> {
+    if let Some(home_path) = home_dir() {
+        let config_path = home_path.join(".config/statcat/config.toml");
+
+        let config_str = fs::read_to_string(config_path)?;
+
+        match toml::de::from_str::<Config>(&config_str) {
+            Ok(config) => Ok(config),
+            Err(_) => Err(io::Error::new(io::ErrorKind::InvalidData, "Failed to parse TOML")),
+        }
+    } else {
+        Err(io::Error::new(io::ErrorKind::NotFound, "Home directory not found"))
+    }
+}
+
+
+fn hex_to_ansi(hex: &str) -> String {
+    let hex = hex.trim_start_matches('#');
+
+    let r = u8::from_str_radix(&hex[0..2], 16).unwrap_or(0);
+    let g = u8::from_str_radix(&hex[2..4], 16).unwrap_or(0);
+    let b = u8::from_str_radix(&hex[4..6], 16).unwrap_or(0);
+
+    format!("\u{001b}[38;2;{};{};{}m", r, g, b)
+}
+
+
+
