@@ -5,7 +5,6 @@ Install
 curl -sL https://raw.githubusercontent.com/fluffocj/statcat/main/install.sh | bash
 ```
 
-Until I create documentation, you can see available config options [here](https://github.com/FluffoCJ/StatCat/blob/main/src/config.rs)
 
 <details>
   <summary>Image 1</summary>
