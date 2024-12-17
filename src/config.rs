@@ -15,7 +15,13 @@ pub struct Config {
 #[derive(Serialize, Deserialize, Default)]
 pub struct General {
     #[serde(default)]
-    pub decoration: String,
+    pub figlet: bool,
+    #[serde(default)]
+    pub figlet_text: String,
+    #[serde(default)]
+    pub figlet_arg: String,
+    #[serde(default)]
+    pub figlet_color: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default)]

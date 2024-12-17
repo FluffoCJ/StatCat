@@ -7,19 +7,35 @@ use std::io;
 use home::home_dir;
 use sysinfo::System;
 use std::collections::HashMap;
+use std::error::Error;
+use std::process::Command;
 
 mod config;
 mod fetch;
 mod packages;
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let mut system = System::new();
     system.refresh_memory();
+    
 
-    print_config();
+    let config = load_config()?;
+    if config.general.figlet {
+        let figlet_color = config.general.figlet_color.clone().unwrap_or_default();
+        let figlet_text = get_figlet(&config).unwrap_or_default();
+        let figlet = figlet_text
+                .lines()
+                .take(figlet_text.lines().count() - 1)
+                .collect::<Vec<_>>()
+                .join("\n");
+        println!("{figlet_color}{figlet} \x1b[0m");
+    }
+    print_config(&config)?;
+
+    Ok(())
 }
 
-fn print_config() -> Result<(), Box<dyn std::error::Error>> {
+fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
     let config = load_config()?;
 
     for line in &config.config.output {
@@ -55,6 +71,25 @@ fn print_config() -> Result<(), Box<dyn std::error::Error>> {
         println!("{}", line);
     }
     Ok(())
+}
+
+
+fn get_figlet(config: &Config) -> Result<String, String> {
+    let output = Command::new("figlet")
+        .arg(&config.general.figlet_text)
+        .arg(&config.general.figlet_arg)
+        .output();
+
+    match output {
+        Ok(output) => {
+            if !output.stdout.is_empty() {
+                Ok(String::from_utf8_lossy(&output.stdout).to_string())
+            } else {
+                Err("No output from the command".to_string())
+            }
+        }
+        Err(e) => Err(format!("Error running command: {}", e)),
+    }
 }
 
 pub fn load_config() -> Result<Config, io::Error> {
