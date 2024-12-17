@@ -1,10 +1,6 @@
 use regex::Regex;
-use std::fs::File;
 use std::fs::{self, read_to_string};
-use std::io::Read;
-use std::path::PathBuf;
 use std::io::{self, BufRead};
-use std::process::Command;
 
 
 pub fn get_cpu() -> Option<String> {
