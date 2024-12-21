@@ -4,6 +4,7 @@ Install
 ```
 curl -sL https://raw.githubusercontent.com/fluffocj/statcat/main/install.sh | bash
 ```
+[Documentation](https://github.com/FluffoCJ/StatCat/wiki)
 
 
 <details>
