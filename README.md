@@ -25,46 +25,18 @@ curl -sL https://raw.githubusercontent.com/fluffocj/statcat/main/install.sh | ba
 </details>
 
 
+# Roadmap
 
-# Features
-- Figlet
-- Allow hex codes for colors
-- Custom separator in config
-- Colors module
-- Distro Name
-- Hostname
-- Username
-- Package count
-- CPU Module
-- Shell
-- Gpu Module
-- Uptime module
-- Terminal module
-- Icons
-- Color
-- Date time module
-
-
-
-<details>
-  <summary>Rewrite Roadmap</summary>
-
-# Implemented
+### Implemented
 - Modules: OS, Hostname, CPU, Packages, Kernel,
-Terminal, Uptime, Username, Shell, Desktop
-- Config rework: Completely custom config, users decide exactly how it is printed.
+Terminal, Uptime, Username, Shell, Desktop, Memory
 - Figlet
 - Custom ASCII
 
-# To do
+### To do
 - Images
 - Cache figlet
-- Modules: Memory, Local IP, Media, Battery, Storage, GPU,
-- Add bars to memory usage
-
-# Other info
-- Bordered decoration will no longer be an option, instead users will have to insert the border icons manually in the config. (This may change)
-
+- Modules: Local IP, Media, Battery, Storage, GPU, Package Manager
 
 </details>
 
