@@ -14,7 +14,7 @@ output = [
   "│{MA}   Terminal  {WE}│  {terminal}",
   "│{RD}   Shell     {WE}│  {shell}",
   "│{YW}   CPU       {WE}│  {cpu}",
-  "│{GN}   Memory    {WE}│  {used_mem_gb}GB/{free_mem_gb}GB",
+  "│{GN}   Memory    {WE}│  {used_mem_gb}GB/{total_mem_gb}GB",
   "│{CN}   Uptime    {WE}│  {uptime}",
   "│{BE}   Colors    {WE}│  {BK}{CI}{RD}{CI}{YW}{CI}{GN}{CI}{CN}{CI}{BE}{CI}{MA}{CI}",
   "╰──────────────╯",
