@@ -38,6 +38,63 @@ pub fn get_shell() -> String {
         .to_string()
 }
 
+pub struct Memory {
+    pub total_kb: u64,
+    pub free_kb: u64,
+    pub used_kb: u64,
+    pub total_mb: f64,
+    pub free_mb: f64,
+    pub used_mb: f64,
+    pub total_gb: f64,
+    pub free_gb: f64,
+    pub used_gb: f64,
+}
+
+pub fn get_memory() -> Memory {
+    let contents = fs::read_to_string("/proc/meminfo").expect("Failed to read /proc/meminfo");
+
+    let mut total = 0;
+    let mut free = 0;
+    let mut buffers = 0;
+    let mut cached = 0;
+
+    for line in contents.lines() {
+        if line.starts_with("MemTotal:") {
+            total = line.split_whitespace().nth(1).unwrap().parse().unwrap();
+        }
+        if line.starts_with("MemFree:") {
+            free = line.split_whitespace().nth(1).unwrap().parse().unwrap();
+        }
+        if line.starts_with("Buffers:") {
+            buffers = line.split_whitespace().nth(1).unwrap().parse().unwrap();
+        }
+        if line.starts_with("Cached:") {
+            cached = line.split_whitespace().nth(1).unwrap().parse().unwrap();
+        }
+    }
+
+    let used = total - free - buffers - cached;
+
+    let total_mb = total as f64 / 1024.0;
+    let free_mb = free as f64 / 1024.0;
+    let used_mb = used as f64 / 1024.0;
+
+    let total_gb = total_mb / 1024.0;
+    let free_gb = free_mb / 1024.0;
+    let used_gb = used_mb / 1024.0;
+
+    Memory {
+        total_kb: total,
+        free_kb: free,
+        used_kb: used,
+        total_mb: (total_mb * 10.0).round() / 10.0,
+        free_mb: (free_mb * 10.0).round() / 10.0,
+        used_mb: (used_mb * 10.0).round() / 10.0,
+        total_gb: (total_gb * 10.0).round() / 10.0,
+        free_gb: (free_gb * 10.0).round() / 10.0,
+        used_gb: (used_gb * 10.0).round() / 10.0,
+    }
+}
 pub fn get_uptime() -> Option<String> {
     if let Ok(content) = fs::read_to_string("/proc/uptime") {
         if let Some(uptime_seconds) = content.split_whitespace().next()?.parse::<f64>().ok() {
