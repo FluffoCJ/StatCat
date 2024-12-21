@@ -1,14 +1,11 @@
 use crate::config::*;
 use battery::Manager;
 use chrono::Local;
-use nixinfo;
-use std::fs;
-use std::io;
 use home::home_dir;
+use itertools::Itertools;
+use nixinfo;
+use std::{collections::HashMap, error::Error, fs, io, process::Command};
 use sysinfo::System;
-use std::collections::HashMap;
-use std::error::Error;
-use std::process::Command;
 
 mod config;
 mod fetch;
@@ -17,40 +14,51 @@ mod packages;
 fn main() -> Result<(), Box<dyn Error>> {
     let mut system = System::new();
     system.refresh_memory();
-    
 
     let config = load_config()?;
     if config.general.figlet {
         let figlet_color = config.general.figlet_color.clone().unwrap_or_default();
         let figlet_text = get_figlet(&config).unwrap_or_default();
         let figlet = figlet_text
-                .lines()
-                .take(figlet_text.lines().count() - 1)
-                .collect::<Vec<_>>()
-                .join("\n");
+            .lines()
+            .take(figlet_text.lines().count() - 1)
+            .collect::<Vec<_>>()
+            .join("\n");
         println!("{figlet_color}{figlet} \x1b[0m");
     }
+
     print_config(&config)?;
 
     Ok(())
 }
 
 fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
-    let config = load_config()?;
+    for pair in config
+        .config
+        .output
+        .iter()
+        .zip_longest(config.general.ascii.iter())
+    {
+        let (line, ascii) = match pair {
+            itertools::EitherOrBoth::Both(line, ascii) => (line.clone(), ascii.clone()),
+            itertools::EitherOrBoth::Left(line) => (line.clone(), String::new()),
+            itertools::EitherOrBoth::Right(ascii) => (String::new(), ascii.clone()),
+        };
 
-    for line in &config.config.output {
-        let mut line = line.clone();
-
-        for (key, value) in &config.colors {
+        let mut line = line;
+        let mut ascii = ascii;
+        for (key, value) in &config.variables {
             let placeholder = format!("{{{}}}", key);
-
             if value.starts_with("#") {
                 let ansi_color = hex_to_ansi(value);
                 line = line.replace(&placeholder, &ansi_color);
+                ascii = ascii.replace(&placeholder, &ansi_color);
             } else {
                 line = line.replace(&placeholder, value);
+                ascii = ascii.replace(&placeholder, value);
             }
         }
+
         let mut replacements: HashMap<&str, fn() -> String> = HashMap::new();
         replacements.insert("{os}", || fetch::get_distro().unwrap_or_default());
         replacements.insert("{hostname}", || fetch::get_hostname().unwrap_or_default());
@@ -68,11 +76,12 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
                 line = line.replace(placeholder, &fetch_func());
             }
         }
-        println!("{}", line);
+
+        println!("{} {} \x1b[0m", ascii, line);
     }
+
     Ok(())
 }
-
 
 fn get_figlet(config: &Config) -> Result<String, String> {
     let output = Command::new("figlet")
@@ -100,13 +109,21 @@ pub fn load_config() -> Result<Config, io::Error> {
 
         match toml::de::from_str::<Config>(&config_str) {
             Ok(config) => Ok(config),
-            Err(_) => Err(io::Error::new(io::ErrorKind::InvalidData, "Failed to parse TOML")),
+            Err(e) => {
+                eprintln!("Error parsing TOML: {}", e);
+                Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "Failed to parse TOML",
+                ))
+            }
         }
     } else {
-        Err(io::Error::new(io::ErrorKind::NotFound, "Home directory not found"))
+        Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            "Home directory not found",
+        ))
     }
 }
-
 
 fn hex_to_ansi(hex: &str) -> String {
     let hex = hex.trim_start_matches('#');
@@ -117,6 +134,3 @@ fn hex_to_ansi(hex: &str) -> String {
 
     format!("\u{001b}[38;2;{};{};{}m", r, g, b)
 }
-
-
-

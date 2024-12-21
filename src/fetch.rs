@@ -2,7 +2,6 @@ use regex::Regex;
 use std::fs::{self, read_to_string};
 use std::io::{self, BufRead};
 
-
 pub fn get_cpu() -> Option<String> {
     if let Ok(cpuinfo) = read_to_string("/proc/cpuinfo") {
         for line in cpuinfo.lines() {
@@ -39,8 +38,6 @@ pub fn get_shell() -> String {
         .to_string()
 }
 
-
-
 pub fn get_uptime() -> Option<String> {
     if let Ok(content) = fs::read_to_string("/proc/uptime") {
         if let Some(uptime_seconds) = content.split_whitespace().next()?.parse::<f64>().ok() {
@@ -66,8 +63,7 @@ pub fn get_kernel() -> String {
 
     if let Some(caps) = re.captures(&version) {
         caps[1].to_string()
-    }
-    else {
+    } else {
         "Unknown Kernel Version".to_string()
     }
 }
@@ -79,7 +75,6 @@ pub fn get_desktop() -> String {
 pub fn get_user() -> String {
     std::env::var("USER").unwrap_or_else(|_| "Unknown".to_string())
 }
-
 
 pub fn get_distro() -> Option<String> {
     let file = fs::File::open("/etc/os-release").ok()?;
@@ -95,5 +90,3 @@ pub fn get_distro() -> Option<String> {
 
     None
 }
-
-
