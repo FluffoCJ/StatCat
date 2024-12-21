@@ -17,13 +17,16 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let config = load_config()?;
     if config.general.figlet {
-        let figlet_color = config.general.figlet_color.clone().unwrap_or_default();
+        let mut figlet_color = config.general.figlet_color.clone().unwrap_or_default();
         let figlet_text = get_figlet(&config).unwrap_or_default();
         let figlet = figlet_text
             .lines()
             .take(figlet_text.lines().count() - 1)
             .collect::<Vec<_>>()
             .join("\n");
+        if figlet_color.starts_with("#") {
+            figlet_color = hex_to_ansi(&figlet_color);
+        }
         println!("{figlet_color}{figlet} \x1b[0m");
     }
 
