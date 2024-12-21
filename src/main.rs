@@ -74,8 +74,8 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         replacements.insert("{shell}", || fetch::get_shell());
         replacements.insert("{desktop}", || fetch::get_desktop());
         // Free Memory
-        replacements.insert("{free_mem_gb}", || fetch::get_memory().free_mb.to_string());
-        replacements.insert("{free_mem_mb}", || fetch::get_memory().free_gb.to_string());
+        replacements.insert("{free_mem_gb}", || fetch::get_memory().free_gb.to_string());
+        replacements.insert("{free_mem_mb}", || fetch::get_memory().free_mb.to_string());
         replacements.insert("{free_mem_kb}", || fetch::get_memory().free_kb.to_string());
         // Used Memory
         replacements.insert("{used_mem_gb}", || fetch::get_memory().used_gb.to_string());
