@@ -54,10 +54,10 @@ curl -sL https://raw.githubusercontent.com/fluffocj/statcat/main/install.sh | ba
 Terminal, Uptime, Username, Shell, Desktop
 - Config rework: Completely custom config, users decide exactly how it is printed.
 - Figlet
+- Custom ASCII
 
 # To do
 - Images
-- Custom ASCII
 - Cache figlet
 - Modules: Memory, Local IP, Media, Battery, Storage, GPU,
 - Add bars to memory usage
