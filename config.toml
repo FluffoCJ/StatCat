@@ -1,82 +1,69 @@
-# This is the example config. Nerd fonts are required for the icons
+[config]
 
-[username]
-text = "Username"
-icon = "  "
-[hostname]
-text = "Hostname"
-icon = "󰇅  "
-[os]
-text = "OS"
-icon = "  "
-[packages]
-text = "Packages"
-icon = "󰏖  "
-[terminal]
-text = "Terminal"
-icon = "  "
-[shell]
-text = "Shell"
-icon = "  "
-[desktop]
-text = "Desktop"
-icon = "󰍹  "
-[gpu] # Significantly decreases speed, I need to rewrite
-text = "GPU"
-icon = "  "
-[cpu]
-text = "CPU"
-icon = "  "
-[memory]
-text = "Memory"
-icon = "  "
-display_mb = false
-display_percent = false
-[uptime]
-text = "Uptime"
-icon = "  "
-[colors]
-text = "Colors"
-icon = "  "
-color_icon = "󰣏"
-[time_date]
-text = "Time/Date"
-format = "%m/%d/%Y - %H:%M"
-icon = "󰺗  "
-[kernel]
-text = "Kernel"
-icon = "   "
+
+# Output of "statcat" command, words/letters contained in curly brackets are variables
+# which can be user defined.
+# See github for all pre defined variables.
+output = [
+  "╭──────────────╮",
+  "│{RD}   Username  {WE}│  {username}",
+  "│{YW}   Hostname  {WE}│  {hostname}",
+  "│{GN}   Distro    {WE}│  {os}",
+  "│{CN}   Packages  {WE}│  {packages}",
+  "│{BE}  󱂬 Desktop   {WE}│  {desktop}",
+  "│{MA}   Terminal  {WE}│  {terminal}",
+  "│{RD}   Shell     {WE}│  {shell}",
+  "│{YW}   CPU       {WE}│  {cpu}",
+  "│{GN}   Memory    {WE}│  {used_mem_gb}GB/{free_mem_gb}GB",
+  "│{CN}   Uptime    {WE}│  {uptime}",
+  "│{BE}   Colors    {WE}│  {BK}{CI}{RD}{CI}{YW}{CI}{GN}{CI}{CN}{CI}{BE}{CI}{MA}{CI}",
+  "╰──────────────╯",
+]
+
 [general]
-decoration = "border"
-separator = ""
-# If you have border decoration and its "messy",
-# you likely need to increase the padding number.
-padding = 10
 figlet = true
 figlet_text = "StatCat!"
-#figlet_arg = "-smushmode"
-figlet_color = "magenta"
-colors_order = [
-"red", "yellow", "green",
-"cyan", "blue", "magenta",
-"red", "yellow", "green",
-"cyan", "blue", "magenta"
-]
-
-# You can have 5 custom modules,
-# custom1, custom2, up to 5
-# To print it just add "custom1" to fields
-# Replace 1 with whichever you want to print
-[custom1]
-text = ""
-icon = ""
-value = ""
+# figlet_color cannot use variables, it must use either
+# an ansi color code (which the default color variables are set to)
+# or use a hex code.
+figlet_color = "#F5C2E7"
 
 
-[order]
-fields = [
-"username", "hostname", "os", "packages","desktop", "terminal",
-"shell", "cpu", "memory", "uptime","time_date", "colors", 
-]
+# ASCII art must be under [general]
+# You can use your colors and variables defined under [variables]
+# If there is a backslash "\" there must be two or youll recieve an-
+# error, ex: "\\"
+# ASCII Art example:
+#ascii = [
+#"                     ",
+#"                     ",
+#"          /\\         ",
+#"         /  \\        ",
+#"        /\\   \\       ",
+#"       /      \\      ",
+#"      /   ,,   \\     ",
+#"     /   |  |  -\\    ",
+#"    /_-''    ''-_\\   ",
+#"                     ",
+#"                     ",
+#"                     ",
+#]
+
+
+[variables]
+BK        = "\u001b[30m" # Black
+RD         = "\u001b[31m" # Red
+GN       = "\u001b[32m" # Green
+YW      = "\u001b[33m" # Yellow
+BE        = "\u001b[34m" # Blue
+MA     = "\u001b[35m" # Magenta
+CN        = "\u001b[36m" # Cyan
+WE       = "\u001b[37m" # White
+
+CI = "󰣏 " # Colors icon
+
+# border icons: ╭ ╮ ─ │ ╰ ╯
+
+
 
 
