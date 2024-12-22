@@ -6,6 +6,7 @@ curl -sL https://raw.githubusercontent.com/fluffocj/statcat/main/install.sh | ba
 ```
 [Documentation](https://github.com/FluffoCJ/StatCat/wiki)
 
+Config is located at ```~/.config/statcat/statcat.toml```
 
 <details>
   <summary>Image 1</summary>
