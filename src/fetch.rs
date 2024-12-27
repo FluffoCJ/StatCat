@@ -76,6 +76,10 @@ pub fn get_user() -> String {
     std::env::var("USER").unwrap_or_else(|_| "Unknown".to_string())
 }
 
+pub fn get_session_type() -> String {
+    std::env::var("XDG_SESSION_TYPE").unwrap_or_else(|_| "Unknown".to_string())
+}
+
 pub fn get_distro() -> Option<String> {
     let file = fs::File::open("/etc/os-release").ok()?;
     let reader = io::BufReader::new(file);

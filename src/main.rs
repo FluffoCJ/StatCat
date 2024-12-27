@@ -73,6 +73,7 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         replacements.insert("{package_manager}", || {
             packages::detect_package_manager().to_string()
         });
+        replacements.insert("{session_type}", || fetch::get_session_type());
 
         // Free Memory
         replacements.insert("{free_mem_gb}", || {
