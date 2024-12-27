@@ -5,16 +5,12 @@ use home::home_dir;
 use itertools::Itertools;
 use nixinfo;
 use std::{collections::HashMap, error::Error, fs, io, process::Command};
-use sysinfo::System;
 
 mod config;
 mod fetch;
 mod packages;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut system = System::new();
-    system.refresh_memory();
-
     let config = load_config()?;
     if config.general.figlet {
         let mut figlet_color = config.general.figlet_color.clone().unwrap_or_default();
@@ -74,6 +70,7 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         replacements.insert("{shell}", || fetch::get_shell());
         replacements.insert("{desktop}", || fetch::get_desktop());
         replacements.insert("{ip}", || fetch::get_local_ip());
+
         // Free Memory
         replacements.insert("{free_mem_gb}", || fetch::get_memory().free_gb.to_string());
         replacements.insert("{free_mem_mb}", || fetch::get_memory().free_mb.to_string());
@@ -91,6 +88,17 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         });
         replacements.insert("{total_mem_kb}", || {
             fetch::get_memory().total_kb.to_string()
+        });
+
+        // Storage
+        replacements.insert("{total_storage}", || {
+            fetch::get_storage().total_storage.to_string()
+        });
+        replacements.insert("{used_storage}", || {
+            fetch::get_storage().used_storage.to_string()
+        });
+        replacements.insert("{free_storage}", || {
+            fetch::get_storage().free_storage.to_string()
         });
 
         for (placeholder, fetch_func) in &replacements {

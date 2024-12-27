@@ -9,11 +9,10 @@ chrono = "0.4.38"
 dirs = "5.0.1"
 home = "0.5.11"
 itertools = "0.13.0"
+libc = "0.2.169"
 nixinfo = "0.3.3"
 regex = "1.11.1"
 serde = { version = "1.0.215", features = ["derive"] }
-sysinfo = "0.32.1"
-terminal = "0.2.1"
 toml = "0.8.19"
 
 [profile.release]

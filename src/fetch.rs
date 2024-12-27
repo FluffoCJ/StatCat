@@ -1,4 +1,6 @@
-use regex::Regex;
+use libc::{c_ulong, statvfs};
+use regex::{bytes, Regex};
+use std::ffi::CString;
 use std::fs::{self, read_to_string};
 use std::io::{self, BufRead};
 use std::net::{IpAddr, UdpSocket};
@@ -12,6 +14,32 @@ pub fn get_cpu() -> Option<String> {
         }
     }
     None
+}
+
+pub struct Storage {
+    pub total_storage: u64,
+    pub free_storage: u64,
+    pub used_storage: u64,
+}
+
+pub fn get_storage() -> Storage {
+    let path = CString::new("/").unwrap();
+
+    let mut stats: libc::statvfs = unsafe { std::mem::zeroed() };
+
+    let result = unsafe { statvfs(path.as_ptr(), &mut stats) };
+
+    let block_size = stats.f_frsize as u64;
+    let total_storage = block_size * stats.f_blocks as u64;
+    let free_storage = block_size * stats.f_bfree as u64;
+    let used_storage = total_storage - free_storage;
+
+    let bytes_to_gb = 1_073_741_824;
+    Storage {
+        total_storage: total_storage / bytes_to_gb,
+        free_storage: free_storage / bytes_to_gb,
+        used_storage: used_storage / bytes_to_gb,
+    }
 }
 
 pub fn get_shell() -> String {
