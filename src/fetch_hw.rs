@@ -24,7 +24,7 @@ pub fn get_storage() -> Storage {
 
     let mut stats: libc::statvfs = unsafe { std::mem::zeroed() };
 
-    let result = unsafe { statvfs(path.as_ptr(), &mut stats) };
+    let _result = unsafe { statvfs(path.as_ptr(), &mut stats) };
 
     let block_size = stats.f_frsize as u64;
     let total_storage = block_size * stats.f_blocks as u64;

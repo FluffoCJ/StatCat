@@ -1,5 +1,5 @@
-use regex::{bytes, Regex};
-use std::fs::{self, read_to_string};
+use regex::Regex;
+use std::fs::{self};
 use std::io::{self, BufRead};
 use std::net::{IpAddr, UdpSocket};
 

@@ -1,28 +1,27 @@
 use crate::config::*;
-use battery::Manager;
-use chrono::Local;
 use home::home_dir;
 use itertools::Itertools;
 use nixinfo;
-use std::{collections::HashMap, error::Error, fs, io, process::Command};
+use std::{collections::HashMap, error::Error, fs, io};
 
 mod config;
 mod fetch;
 mod fetch_hw;
+mod misc;
 mod packages;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let config = load_config()?;
     if config.general.figlet {
         let mut figlet_color = config.general.figlet_color.clone().unwrap_or_default();
-        let figlet_text = get_figlet(&config).unwrap_or_default();
+        let figlet_text = misc::get_figlet(&config).unwrap_or_default();
         let figlet = figlet_text
             .lines()
             .take(figlet_text.lines().count() - 1)
             .collect::<Vec<_>>()
             .join("\n");
         if figlet_color.starts_with("#") {
-            figlet_color = hex_to_ansi(&figlet_color);
+            figlet_color = misc::hex_to_ansi(&figlet_color);
         }
         println!("{figlet_color}{figlet} \x1b[0m");
     }
@@ -50,7 +49,7 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         for (key, value) in &config.variables {
             let placeholder = format!("{{{}}}", key);
             if value.starts_with("#") {
-                let ansi_color = hex_to_ansi(value);
+                let ansi_color = misc::hex_to_ansi(value);
                 line = line.replace(&placeholder, &ansi_color);
                 ascii = ascii.replace(&placeholder, &ansi_color);
             } else {
@@ -129,24 +128,6 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn get_figlet(config: &Config) -> Result<String, String> {
-    let output = Command::new("figlet")
-        .arg(&config.general.figlet_text)
-        .arg(&config.general.figlet_arg)
-        .output();
-
-    match output {
-        Ok(output) => {
-            if !output.stdout.is_empty() {
-                Ok(String::from_utf8_lossy(&output.stdout).to_string())
-            } else {
-                Err("No output from the command".to_string())
-            }
-        }
-        Err(e) => Err(format!("Error running command: {}", e)),
-    }
-}
-
 pub fn load_config() -> Result<Config, io::Error> {
     if let Some(home_path) = home_dir() {
         let config_path = home_path.join(".config/statcat/config.toml");
@@ -169,14 +150,4 @@ pub fn load_config() -> Result<Config, io::Error> {
             "Home directory not found",
         ))
     }
-}
-
-fn hex_to_ansi(hex: &str) -> String {
-    let hex = hex.trim_start_matches('#');
-
-    let r = u8::from_str_radix(&hex[0..2], 16).unwrap_or(0);
-    let g = u8::from_str_radix(&hex[2..4], 16).unwrap_or(0);
-    let b = u8::from_str_radix(&hex[4..6], 16).unwrap_or(0);
-
-    format!("\u{001b}[38;2;{};{};{}m", r, g, b)
 }
