@@ -1,6 +1,7 @@
 use regex::Regex;
 use std::fs::{self, read_to_string};
 use std::io::{self, BufRead};
+use std::net::{IpAddr, UdpSocket};
 
 pub fn get_cpu() -> Option<String> {
     if let Ok(cpuinfo) = read_to_string("/proc/cpuinfo") {
@@ -104,6 +105,16 @@ pub fn get_uptime() -> Option<String> {
         }
     }
     None
+}
+
+pub fn get_local_ip() -> String {
+    let socket = UdpSocket::bind("0.0.0.0:0").unwrap();
+    socket.connect("8.8.8.8:80").unwrap();
+    if let IpAddr::V4(ip) = socket.local_addr().unwrap().ip() {
+        ip.to_string()
+    } else {
+        String::from("Unable to determine IP")
+    }
 }
 
 pub fn get_hostname() -> Option<String> {

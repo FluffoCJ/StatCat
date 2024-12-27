@@ -73,6 +73,7 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         replacements.insert("{username}", || fetch::get_user());
         replacements.insert("{shell}", || fetch::get_shell());
         replacements.insert("{desktop}", || fetch::get_desktop());
+        replacements.insert("{ip}", || fetch::get_local_ip());
         // Free Memory
         replacements.insert("{free_mem_gb}", || fetch::get_memory().free_gb.to_string());
         replacements.insert("{free_mem_mb}", || fetch::get_memory().free_mb.to_string());
