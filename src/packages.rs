@@ -45,8 +45,7 @@ fn count_rpm_packages() -> usize {
     let path = "/var/lib/rpm/Packages";
     if fs::metadata(path).is_ok() {
         1
-    }
-    else {
+    } else {
         0
     }
 }

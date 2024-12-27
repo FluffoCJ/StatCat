@@ -8,6 +8,7 @@ use std::{collections::HashMap, error::Error, fs, io, process::Command};
 
 mod config;
 mod fetch;
+mod fetch_hw;
 mod packages;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -61,7 +62,7 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         let mut replacements: HashMap<&str, fn() -> String> = HashMap::new();
         replacements.insert("{os}", || fetch::get_distro().unwrap_or_default());
         replacements.insert("{hostname}", || fetch::get_hostname().unwrap_or_default());
-        replacements.insert("{cpu}", || fetch::get_cpu().unwrap_or_default());
+        replacements.insert("{cpu}", || fetch_hw::get_cpu().unwrap_or_default());
         replacements.insert("{packages}", || packages::get_package_count().to_string());
         replacements.insert("{kernel}", || fetch::get_kernel());
         replacements.insert("{terminal}", || nixinfo::terminal().unwrap_or_default());
@@ -75,33 +76,45 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         });
 
         // Free Memory
-        replacements.insert("{free_mem_gb}", || fetch::get_memory().free_gb.to_string());
-        replacements.insert("{free_mem_mb}", || fetch::get_memory().free_mb.to_string());
-        replacements.insert("{free_mem_kb}", || fetch::get_memory().free_kb.to_string());
+        replacements.insert("{free_mem_gb}", || {
+            fetch_hw::get_memory().free_gb.to_string()
+        });
+        replacements.insert("{free_mem_mb}", || {
+            fetch_hw::get_memory().free_mb.to_string()
+        });
+        replacements.insert("{free_mem_kb}", || {
+            fetch_hw::get_memory().free_kb.to_string()
+        });
         // Used Memory
-        replacements.insert("{used_mem_gb}", || fetch::get_memory().used_gb.to_string());
-        replacements.insert("{used_mem_mb}", || fetch::get_memory().used_mb.to_string());
-        replacements.insert("{used_mem_kb}", || fetch::get_memory().used_kb.to_string());
+        replacements.insert("{used_mem_gb}", || {
+            fetch_hw::get_memory().used_gb.to_string()
+        });
+        replacements.insert("{used_mem_mb}", || {
+            fetch_hw::get_memory().used_mb.to_string()
+        });
+        replacements.insert("{used_mem_kb}", || {
+            fetch_hw::get_memory().used_kb.to_string()
+        });
         // Total Memory
         replacements.insert("{total_mem_gb}", || {
-            fetch::get_memory().total_gb.to_string()
+            fetch_hw::get_memory().total_gb.to_string()
         });
         replacements.insert("{total_mem_mb}", || {
-            fetch::get_memory().total_mb.to_string()
+            fetch_hw::get_memory().total_mb.to_string()
         });
         replacements.insert("{total_mem_kb}", || {
-            fetch::get_memory().total_kb.to_string()
+            fetch_hw::get_memory().total_kb.to_string()
         });
 
         // Storage
         replacements.insert("{total_storage}", || {
-            fetch::get_storage().total_storage.to_string()
+            fetch_hw::get_storage().total_storage.to_string()
         });
         replacements.insert("{used_storage}", || {
-            fetch::get_storage().used_storage.to_string()
+            fetch_hw::get_storage().used_storage.to_string()
         });
         replacements.insert("{free_storage}", || {
-            fetch::get_storage().free_storage.to_string()
+            fetch_hw::get_storage().free_storage.to_string()
         });
 
         for (placeholder, fetch_func) in &replacements {
