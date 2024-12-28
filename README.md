@@ -1,4 +1,4 @@
-# StatCat - Work in Progress System Fetch Written in Rust
+# StatCat - Fast and customizable system fetch written in Rust
 
 StatCat is a customizable system fetch tool written in Rust. It allows you to display system information with full flexibility, including custom colors, texts, ASCII art, and figlet logos.
 
