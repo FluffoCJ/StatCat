@@ -27,6 +27,10 @@ StatCat is a customizable system fetch tool written in Rust. It allows you to di
 </details>
 
 ## Installation
+Arch (pacman):
+```bash 
+yay -S statcat
+```
 
 To install StatCat, run the following command:
 ```bash
