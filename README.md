@@ -47,14 +47,14 @@ Config is located at ```~/.config/statcat/statcat.toml```
 
 ### Implemented
 - Modules: OS, Hostname, CPU, Packages, Kernel,
-Terminal, Uptime, Username, Shell, Desktop, Memory
+Terminal, Uptime, Username, Shell, Desktop, Memory,
+Local IP, Storage, Package manager
 - Figlet
 - Custom ASCII
 
 ### To do
 - Images
-- Cache figlet
-- Modules: Local IP, Media, Battery, Storage, GPU, Package Manager
+- Modules: Media, Battery, GPU
 
 </details>
 
