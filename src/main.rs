@@ -12,20 +12,8 @@ mod packages;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let config = load_config()?;
-    if config.general.figlet {
-        let mut figlet_color = config.general.figlet_color.clone().unwrap_or_default();
-        let figlet_text = misc::get_figlet(&config).unwrap_or_default();
-        let figlet = figlet_text
-            .lines()
-            .take(figlet_text.lines().count() - 1)
-            .collect::<Vec<_>>()
-            .join("\n");
-        if figlet_color.starts_with("#") {
-            figlet_color = misc::hex_to_ansi(&figlet_color);
-        }
-        println!("{figlet_color}{figlet} \x1b[0m");
-    }
 
+    misc::print_figlet(&config);
     print_config(&config)?;
 
     Ok(())
@@ -38,14 +26,12 @@ fn print_config(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         .iter()
         .zip_longest(config.general.ascii.iter())
     {
-        let (line, ascii) = match pair {
+        let (mut line, mut ascii) = match pair {
             itertools::EitherOrBoth::Both(line, ascii) => (line.clone(), ascii.clone()),
             itertools::EitherOrBoth::Left(line) => (line.clone(), String::new()),
             itertools::EitherOrBoth::Right(ascii) => (String::new(), ascii.clone()),
         };
 
-        let mut line = line;
-        let mut ascii = ascii;
         for (key, value) in &config.variables {
             let placeholder = format!("{{{}}}", key);
             if value.starts_with("#") {
