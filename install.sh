@@ -5,7 +5,7 @@ set -e
 BINARY_NAME="statcat"
 INSTALL_DIR="/usr/local/bin"
 CONFIG_DIR="$HOME/.config/$BINARY_NAME"
-RELEASE_URL="https://github.com/FluffoCJ/StatCat/releases/download/V3.1.0-beta/statcat-v3.1.0-beta.tar.gz"
+RELEASE_URL="https://github.com/FluffoCJ/StatCat/releases/download/V3.1.0.beta/statcat-v3.1.0-beta.tar.gz"
 
 echo "Installing $BINARY_NAME..."
 

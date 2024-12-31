@@ -33,11 +33,16 @@ pub fn print_figlet(config: &Config) {
     if config.general.figlet {
         let mut figlet_color = config.general.figlet_color.clone().unwrap_or_default();
         let figlet_text = get_figlet(&config).unwrap_or_default();
-        let figlet = figlet_text
-            .lines()
-            .take(figlet_text.lines().count() - 1)
-            .collect::<Vec<_>>()
-            .join("\n");
+        let figlet = if figlet_text.lines().count() > 1 {
+    figlet_text
+        .lines()
+        .take(figlet_text.lines().count() - 1)
+        .collect::<Vec<_>>()
+        .join("\n")
+} else {
+    figlet_text.to_string()
+};
+
         if figlet_color.starts_with("#") {
             figlet_color = hex_to_ansi(&figlet_color);
         }
