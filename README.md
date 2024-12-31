@@ -41,6 +41,8 @@ curl -sL https://raw.githubusercontent.com/fluffocj/statcat/main/install.sh | ba
 
 Config is located at ```~/.config/statcat/statcat.toml```
 
+I'm not adding any distro art myself 😭, but feel free to share yours or find your distro (if someone has posted ASCII art of it) [here](https://github.com/FluffoCJ/StatCat/discussions/categories/distro-art)
+
 
 
 # Roadmap
