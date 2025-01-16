@@ -1,6 +1,6 @@
 use libc::statvfs;
 use std::ffi::CString;
-use std::fs::{self, read_to_string};
+use std::fs::{self, read_to_string, File};
 
 pub fn get_cpu() -> Option<String> {
     if let Ok(cpuinfo) = read_to_string("/proc/cpuinfo") {

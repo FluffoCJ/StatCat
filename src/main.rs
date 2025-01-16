@@ -12,7 +12,6 @@ mod packages;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let config = load_config()?;
-
     misc::print_figlet(&config);
     print_config(&config)?;
 
